@@ -34,60 +34,6 @@ script_path=`dirname ${script_location}`
 # NOTE: look for variables like ${link_flags:='-su'} 
 # Braced variables with ":=" sets the default if not previously defined.
 #
-# Major Revision Changelog & TODO:
-# V0.1: Remove filename's prefix ("edu.mit.ll.wx")
-# V0.2: Perform operation on the file, adding the prefix back in.
-# V0.3: Split filename by "." into new array
-# V0.4: Alter Array to match new format
-# V0.5: Rearchitected to "Task" based format
-# R118: Check that files and dirs exist
-# R120: Add support for Tar archiving
-# R121: Add support for Compression / Decompression
-# R122: Change path stuff for user sandboxes (need to use data files from /home/username/*.nc)
-# R131: Add support for parsing of dates from Filenames
-# R135: Add support for subtasks, combined all tasks
-# R136: Add support for 'cron' operations (noclobber)
-# R137: Add support for 'force' operations
-# R138: Extended help support with ft_help.sh module
-# R139: Add support for File size / mtime checking with stat while we process
-# R140: Added FuncDebug support
-# R141: Add support for log rotation
-# R142: fix delay for File modification time checking with stat
-# R143: Moved some bits around, abstracted the CIWS date parsing
-# R144: Cleanup, improved FuncDebug syntax, more debug code, logger improvements
-# R145: Add unix2dos for log trim so windows users can open logs in notepad.
-# R146: Add more hooks for tasks to coopt
-# R147: BUG: unknown subtasks don't throw errors
-# R148: BUG: Can't pass params to subtasks
-# R149: BUG: Can't run outside of script's dir
-# R200: Added depth-1 directory recursion to descend into "yyyymmdd/" directories
-# V0.6: Added more dated directory output types. "yyyy/mm/dd/" and "yyyymmdd/"
-# R201: Added a task for ciws hd5
-# R202: Added pathname parser
-# R203: Improved LDM with pathname parser
-# R204: Added array-based filename builder
-# R205: Improved subtask parameter support
-# R206: Vastly improved path generator
-# R207: Added newlines to fileops
-# R208: Generate different logfiles based on the task name
-# R209: Added a task for asdi.
-# R210: Removed max file/dir limit.
-# R211: Fix logfile timestamps. (?PM not granular enough)
-# R212: Subtask Params now appended to log file name
-# R213: All logs now default to in place gzip compression.
-# R214: Add 'clobber' support -- Overwrite files. Define <operation>_flags in a taskfile.
-# R215: Current log support is only for 'tracing', not Logging or Narration.
-# R216: Added 'transparent' compression functions, used in ldm to gzip uncompressed files.
-# R217: Fixed equality operator for compress (was integer "-eq", should have been string "==")
-# TODO: Check to see if destination file exists. If noclobber, skip 2sec wait & operation.
-# TODO: Generate email only if errors occur. Include place of failure.
-# TODO: Add depth-3 directory recursion to descend into "yyyy/mm/dd/" directories.
-# TODO: Add support for time-based Tar archiving (Last X hours/days of data)
-# TODO: Add support for networked filetransfer (scp)
-# TODO: Add support for networked multifiletransfer (sftp)
-# TODO: Add support for backgrounding networked filetransfer
-# TODO: Add support for max number of simultaneous filetransfers
-#
 # -----------
 # End Program Information
 # -----------
