@@ -1,7 +1,7 @@
 #!/bin/bash
 # -----------
 # FileTasker Script
-ftask_version="V0.6r217"
+ftask_version="V0.7r3"
 # Output Initial Greeting
 echo ""
 echo " FileTasker ${ftask_version}"
@@ -23,7 +23,7 @@ script_path=`dirname ${script_location}`
 # Written in 2009 by Graham Cantin
 #
 # Revision Notes:
-# R214: clobber/Noclobber support
+# V0.6R214: clobber/Noclobber support
 # Each type of operation (move, copy, link, tar, untar, compress, decompress) has a flags variable.
 # This can be set in a taskfile as follows
 # move_flags="-f" # Clobber existing files
