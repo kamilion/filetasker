@@ -45,7 +45,7 @@ file_ext=".grib"
 # For tasks with files in multiple directories.
 ft_multidir=1
 
-# Gzip prompts by default if we don't force compression.
+# Gzip prompts by default if we don't force an overwrite.
 compress_flags="-9f"
 
 # -----------
