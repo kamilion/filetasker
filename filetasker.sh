@@ -64,7 +64,7 @@ E_MISMATCH=67 # File size/mtime didn't match
 # -----------
 
 # Our root operational directory.
-main_path_prefix="/home/ptahiliani/"
+main_path_prefix="/workspace/filetasker/home/"
 source_path_prefix=${main_path_prefix}
 target_path_prefix=${main_path_prefix}
 
