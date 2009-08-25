@@ -140,6 +140,9 @@ task_post()
   check_and_create_target_dirs
   # Perform the file operation (takes care of all paths for us)
   perform_fileop ${selected_subtask} ${orig_file_name} ${new_file_name}
+  # TODO: Hash the target file.
+  # TODO: Add this target entry to the 'completed file list'
+  # TODO: Create link in /<target>/import from the file list entry
   # Set the original source & target path
   source_path="${source_base_path}"
   target_path="${target_base_path}"
