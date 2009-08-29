@@ -102,7 +102,7 @@ task_pre()
   # Parse the filename into $ar_file_name
   parse_filename ${file_name}
   # Get the date from the directory the file was stored in.
-  #parse_to_epoch_from_yyyymmdd_dir ${dir_name}
+  parse_to_epoch_from_yyyymmdd_dir ${ar_file_name[2]:4}
   # Set the right dated source path
   # source_path+="${dir_name}/"
   # Parse the full dated pathname afterwards
