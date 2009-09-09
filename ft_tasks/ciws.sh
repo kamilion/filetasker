@@ -134,7 +134,7 @@ task_post()
   # Dated Directory needs to be generated from the timestamp.
   generate_yyyy_mm_dd_date_dir_from_epoch ${file_epoch}
   # Set the right dated target path (date_dir has trailing /)
-  target_path+="${date_dir}"
+  target_path="${target_path}${date_dir}"
   # Check/Create our destination directory (No args)
   check_and_create_target_dirs
   # Perform the file operation (takes care of all paths for us)

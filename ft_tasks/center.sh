@@ -107,7 +107,7 @@ task_pre()
   # Get the date from the directory the file was stored in.
   parse_to_epoch_from_yyyymmdd_dir ${ar_file_name[3]}
   # Set the right dated source path
-  # source_path+="${dir_name}/"
+  # source_path="${source_path}${dir_name}/"
   # Parse the full dated pathname afterwards
   parse_pathname ${source_path}
   return 0; # Success
@@ -143,7 +143,7 @@ task_post()
   # Dated Directory needs to be generated from the timestamp.
   generate_yyyy_mm_dd_date_dir_from_epoch ${file_epoch}
   # Set the right dated target path (date_dir has trailing /)
-  target_path+="${date_dir}"
+  target_path="${target_path}${date_dir}"
   # Check/Create our destination directory (No args)
   check_and_create_target_dirs
   # Perform the file operation (takes care of all paths for us)
@@ -170,7 +170,7 @@ task_init_hook()
       # TODO: Add arg check for sourcetype
       if [ "${subtask_args[0]}" != "" ]; then
           center_source=${subtask_args[0]}
-          source_base_path+="${center_source}/"
+          source_base_path="${source_base_path}${center_source}/"
           source_path="${source_base_path}"
       fi
       # Too many params?
