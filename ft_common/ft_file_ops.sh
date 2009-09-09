@@ -200,7 +200,7 @@ build_filename()
   # Iterate over array and rebuild new filename
   for name_element in ${my_ar_file_name[@]}
     do
-      my_output_file_name+=".${name_element}"
+      my_output_file_name="${my_output_file_name}.${name_element}"
     done
   # Copy the new string to a real variable and strip off the leading "."
   new_file_name=${my_output_file_name:1}
@@ -316,7 +316,12 @@ check_and_compress_gzip_file()
       debug_out " File is already compressed with gzip." # We're already gzipped.
     else
       debug_out " File not compressed. Compressing with gzip..."
-      compress_gzip_file ${target_path}${1} # Compress the file.
+      if ["${selected_subtask}" == "debug"];
+        then
+          debug_out " Skipped compression, in debug mode."
+        else
+          compress_gzip_file ${target_path}${1} # Compress the file.
+      fi
   fi
 }
 
