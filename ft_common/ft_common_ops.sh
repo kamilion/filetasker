@@ -155,9 +155,9 @@ quit_filetasker()
   cd ${script_path}
   # Log too big?
   echo "  Trimming log (If needed)..."
-  trim_log
-  # Close the log, show our times
+  # Close the log, show our times, then trim the log (Prevents leaving a one-line log after gz)
   debug_out "LOG SECTION END -- Script took ${SECONDS} seconds to complete all operations."
+  trim_log
   echo " Script took ${SECONDS} seconds to execute."
   echo ""
 }
