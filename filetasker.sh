@@ -8,6 +8,12 @@ echo " FileTasker ${ftask_version}"
 # Script's path
 script_location=`readlink -f ${BASH_SOURCE}`
 script_path=`dirname ${script_location}`
+# Kill Switch (Stop runaway script without aborting)
+if [ -e "${script_path}/ft_config/ft_config_abort_next.on" ]
+  then
+    echo "   Error: Abort Next Task was requested."
+    exit 0;
+fi
 # -----------
 # CMDLine Inputs: $1: "task_name" $2: "subtask_name" $3+: Passed to Task
 # -----------
