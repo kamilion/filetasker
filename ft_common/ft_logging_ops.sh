@@ -134,39 +134,65 @@ function log_output() {
 }
 
 function INFO() {
+    # Message is first param
     log_message=$@
+    # Set Input Field Seperator for parsing pathnames
     IFS=$'/'
+    # Discover filename of caller
     file_source_path_full=${BASH_SOURCE[1]}
+    # Set the variable for parsing
     set -- $file_source_path_full
+    # Use Bash's array & IFS to split the path up
     path_array=( $file_source_path_full )
+    # Reset the IFS back to default
     unset IFS
+    # How big was that path?
     path_array_length=${#path_array[@]}
+    # Grab the last element from the path
     file_source=${path_array[$path_array_length-1]}
+    # Got our caller's filename, call log_output with 2 params
     log_output "INFO" " ${file_source}:${FUNCNAME[1]}:${BASH_LINENO[0]} - $log_message"
 }
 
 function DEBUG() {
+    # Message is first param
     log_message=$@
+    # Set Input Field Seperator for parsing pathnames
     IFS=$'/'
+    # Discover filename of caller
     file_source_path_full=${BASH_SOURCE[1]}
+    # Set the variable for parsing
     set -- $file_source_path_full
+    # Use Bash's array & IFS to split the path up
     path_array=( $file_source_path_full )
+    # Reset the IFS back to default
     unset IFS
+    # How big was that path?
     path_array_length=${#path_array[@]}
+    # Grab the last element from the path
     file_source=${path_array[$path_array_length-1]}
+    # Got our caller's filename, call log_output with 2 params
     log_output "DEBUG" "${file_source}:${FUNCNAME[1]}:${BASH_LINENO[0]} - $log_message"
 }
 
 function ERROR() {
+    # Message is first param
     log_message=$@
+    # Set Input Field Seperator for parsing pathnames
     IFS=$'/'
+    # Discover filename of caller
     file_source_path_full=${BASH_SOURCE[1]}
+    # Set the variable for parsing
     set -- $file_source_path_full
+    # Use Bash's array & IFS to split the path up
     path_array=( $file_source_path_full )
+    # Reset the IFS back to default
     unset IFS
-
+    # How big was that path?
     path_array_length=${#path_array[@]}
+    # Grab the last element from the path
     file_source=${path_array[$path_array_length-1]}
+    # Got our caller's filename, call log_output with 2 params
     log_output "ERROR" "${file_source}:${FUNCNAME[1]}:${BASH_LINENO[0]} - $log_message"
 }
 
