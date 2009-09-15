@@ -111,6 +111,67 @@ debug_out()
     echo -e "("`date '+%F %T'`"): ${@}\r" >> ${debug_path}${debug_filename}
   fi
 }
+
+# Signal Traps
+set_traps()
+{
+  # Set trap for signal DEBUG (DEBUG)
+  #trap "trap_debug_dump" DEBUG
+  # Set trap for signal 0 (EXIT)
+  trap "trap_exit_dump" EXIT
+  # Set trap for signal 1 (HUP)
+  trap "trap_bail_out 1 HANGUP" SIGHUP
+  # Set trap for signal 2 (QUIT)
+  trap "trap_bail_out 2 QUIT" SIGQUIT
+  # Set trap for signal 3 (INT)
+  trap "trap_bail_out 3 INTERRUPT" SIGINT
+  # Set trap for signal 15 (TERM)
+  trap "trap_bail_out 15 TERM" SIGTERM
+  # Display all set traps
+  #trap -p
+}
+
+# Generic bailout
+debug_dump_output=N
+trap_bail_out()
+{
+  debug_out "  Trapped Signal ${1} (${2}), bailing out..."
+  echo "  Trapped Signal ${1} (${2}), bailing out..."
+  debug_dump_output=Y
+  quit_filetasker
+  exit 0
+}
+
+# Debugging variable dumpers
+trap_debug_dump()
+{
+    echo "Call Stack:" ${FUNCNAME[@]}
+    debug_out "Call Stack:" ${FUNCNAME[@]}
+}
+
+trap_exit_dump()
+{
+  if [ ${debug_dump_output} == "Y" ]
+  then
+    echo "Debug Dump in progress..."
+    echo "dump_debug_message:" ${FUNCNAME[@]}
+    echo "   Script Location:" ${script_location}
+    echo "       Script Path:" ${script_path}
+    echo "  Main Path Prefix:" ${main_path_prefix}
+    echo "Source Path Prefix:" ${source_path_prefix}
+    echo "Target Path Prefix:" ${target_path_prefix}
+    echo "           FT_Args:" ${ft_args[*]}
+    echo "         Task Name:" ${task_name}
+    echo "      Subtask Name:" ${subtask_name}
+    trap_debug_task_dump
+  fi
+}
+
+# Override this in the task
+trap_debug_task_dump()
+{
+  :;
+}
 # End Debugging functions
 
 
@@ -151,6 +212,7 @@ select_subtask()
 # Loads a taskfile
 load_task()
 {
+  set_traps
   task_file="${script_path}/ft_tasks/${1}.sh"
   echo "   Loading Task: ${task_file}"
   # Does the taskfile exist?
