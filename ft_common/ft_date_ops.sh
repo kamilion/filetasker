@@ -50,7 +50,7 @@
 # Outputs: $file_epoch - Contains date in epoch format
 parse_to_epoch_from_date_generic()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   local file_datestamp=$1
   local file_year=${file_datestamp:0:4}
   local file_month=${file_datestamp:4:2}
@@ -68,7 +68,7 @@ parse_to_epoch_from_date_generic()
 # Outputs: $file_epoch - Contains date in epoch format
 parse_to_epoch_from_yyyy_mm_dd_dir()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   local my_year=${1:0:4}
   local my_month=${1:5:6}
   local my_day=${1:8:9}
@@ -84,7 +84,7 @@ parse_to_epoch_from_yyyy_mm_dd_dir()
 # Outputs: $file_epoch - Contains date in epoch format
 parse_to_epoch_from_yyyymmdd_dir()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   local my_date=${1:0:8}
   file_epoch=`date +%s -d $my_date`
   file_timestamp=`date -u -d @${file_epoch}`
@@ -98,7 +98,7 @@ parse_to_epoch_from_yyyymmdd_dir()
 # Outputs: $date_dir - Contains date in YYYY/MM/DD/ format
 generate_yyyy_mm_dd_date_dir_from_epoch()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   local my_epoch=${1}
   local file_year=`date +%Y -u -d @${my_epoch}`
   local file_month=`date +%0m -u -d @${my_epoch}`
@@ -112,7 +112,7 @@ generate_yyyy_mm_dd_date_dir_from_epoch()
 # Outputs: $date_dir - Contains date in YYYYMMDD/ format
 generate_yyyymmdd_date_dir_from_epoch()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   local my_epoch=${1}
   local file_year=`date +%Y -u -d @${my_epoch}`
   local file_month=`date +%0m -u -d @${my_epoch}`

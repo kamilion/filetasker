@@ -140,7 +140,7 @@ debug_file()
 # Dummy fileop function
 perform_fileop()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   # Perform the selected file operation
   debug_out " Performing subtask: ${1}"
   case "${1}" in
@@ -166,7 +166,7 @@ parse_pathname_post () { :; }
 # Convert / to space delimited array
 parse_pathname()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   parse_pathname_pre ${@}
   ar_path_name=( $( echo ${1} | tr \'${parse_seperator:-"/"}\' ' ' ) )
   debug_out " Parsed Pathname: ${#ar_path_name[@]} elements:" ${ar_path_name[@]}
@@ -179,7 +179,7 @@ parse_filename_post () { :; }
 # Convert . to space delimited array
 parse_filename()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   parse_filename_pre ${@}
   ar_file_name=( $( echo ${1} | tr \'${parse_seperator:-"."}\' ' ' ) )
   debug_out " Parsed Filename: ${#ar_file_name[@]} elements:" ${ar_file_name[@]}
@@ -192,7 +192,7 @@ build_filename_post () { :; }
 # Convert array to filename
 build_filename()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   build_filename_pre ${ar_file_name[@]}
   # Set up our locals
   local my_ar_file_name=${ar_file_name[@]}
@@ -211,7 +211,7 @@ build_filename()
 # Called once for each working directory
 iterate_files()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   # Gather filenames into array
   filenames=( `ls -1t | grep "${file_ext}" | tr '\n' ' '` )
   echo  "   Found ${#filenames[@]} ${file_ext} files in ${PWD}/"
@@ -232,7 +232,7 @@ iterate_files()
 
 iterate_directories()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   if [ ${ft_multidir} ]; then
     echo "    Searching Multiple Source Directories."
     gather_directories
@@ -256,7 +256,7 @@ iterate_directories()
 
 gather_directories()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   IFS=$'\n'   # Enable for loops over items with spaces in their name
   # Magic Command to run to gather directory list
   local dirsource=`ls -1Ft | grep "/"`
@@ -288,7 +288,7 @@ gather_directories()
 
 files_match()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   if [ "${file_size}" -eq "${file_size_new}" ];
     then
       debug_out " File Size [MATCH] was: ${file_size} now: ${file_size_new}"
@@ -308,7 +308,7 @@ files_match()
 
 check_and_compress_gzip_file()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   local my_filename=${1}
   local is_gzip_ext=${my_filename:(-3)}  # Capture the last three characters of the filename
   if [ "${is_gzip_ext}" == ".gz" ];
@@ -327,7 +327,7 @@ check_and_compress_gzip_file()
 
 check_and_decompress_gzip_file()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   local my_filename=${1}
   local is_gzip_ext=${my_filename:(-3)}  # Capture the last three characters of the filename
   if [ "${is_gzip_ext}" == ".gz" ];

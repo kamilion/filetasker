@@ -190,7 +190,7 @@ task_init()
 # noclobber is the default mode.
 select_subtask()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   case "${1}" in
   "LINK" | "Link" | "link" )
     selected_subtask="link"
