@@ -112,6 +112,14 @@ debug_out()
   fi
 }
 
+make_line_header()
+{
+  eval printf -v spacerline "%.s=" {1..${#1}}
+  debug_out "=======${spacerline}======="
+  debug_out "====== ${1} ======"
+  debug_out "=======${spacerline}======="
+}
+
 # Signal Traps
 set_traps()
 {
@@ -190,7 +198,6 @@ task_init()
 # noclobber is the default mode.
 select_subtask()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}
   case "${1}" in
   "LINK" | "Link" | "link" )
     selected_subtask="link"
