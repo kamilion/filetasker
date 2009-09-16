@@ -293,6 +293,9 @@ gather_directories()
 
 # Start Sub Routines
 
+# ALIAS: Generates the directories the links will be stored in
+generate_dir() { mkdir -p ${1}; }
+
 files_match()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
