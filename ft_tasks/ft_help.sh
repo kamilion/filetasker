@@ -48,7 +48,7 @@ task_init()
 task_help()
 {
         echo "    FT_Help Module - Found task ${1}"
-        #if [ "${1}" == "ft_help.sh" ]; then return 127; else $PWD/${1}; return 0; fi
+        #if [[ "${1}" == "ft_help.sh" ]]; then return 127; else $PWD/${1}; return 0; fi
         $PWD/${1}; # Execute the module for help.
         return 0;
 }
@@ -61,7 +61,7 @@ task()
 {
     task_help $1
     local return_value=${?}
-    if [ $return_value != 0 ]; then echo "     Failure. Reason ID: ${return_value}"; fi
+    if [[ $return_value != 0 ]]; then echo "     Failure. Reason ID: ${return_value}"; fi
     # End of Task
     return 0; # Success
 }

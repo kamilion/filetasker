@@ -65,7 +65,8 @@ transform_operations_post () { :; }
 #Input: $1: Filename
 transform_operations()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   local my_file_name=${1}
   transform_operations_pre ${my_file_name}
   # Add the prefix to index 0
@@ -82,7 +83,8 @@ transform_operations()
 # -----------
 task_pre()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   file_size=`stat -c %s ${file_name}`   # Get Filesize
   file_mtime=`stat -c %Y ${file_name}`   # Get Last Written To in Epoch
   # Parse the filename into an array
@@ -95,7 +97,8 @@ task_pre()
 
 task()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   local my_file_name=${file_name}
   task_pre ${my_file_name}
 
@@ -109,11 +112,12 @@ task()
 
 task_post()
 {
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME} "with ${#@} params:" ${@}
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   debug_out " Sleeping for 2 seconds for mtime check..."; sleep 2; # Snooze for a couple seconds, waiting for mtimes to change?
   file_size_new=`stat -c %s ${file_name}`   # Get Filesize
   file_mtime_new=`stat -c %Y ${file_name}`   # Get Last Written To in Epoch  
-  if [ files_match ];
+  if [[ files_match ]];
    then
     debug_out " Files MATCH  -- PROCESSING THIS FILE"
    else
