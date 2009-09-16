@@ -14,6 +14,13 @@
 # -----------
 
 # -----------
+# Error Codes
+# -----------
+
+E_MISSINGFILE=66 # Couldn't find a file
+E_MISMATCH=67 # File size/mtime didn't match
+
+# -----------
 # Arrays
 # -----------
 
@@ -227,7 +234,7 @@ iterate_files()
       # Is this truly a file?
       if [[ -e "${file_name}" ]]; then
         # Yes, it's a file. Snapshot the old name, and call the task.
-        debug_out " FOUND A FILE: ${file_name}"
+        #debug_out " FOUND A FILE: ${file_name}"
         orig_file_name=${file_name}
         task ${file_name}
       fi
@@ -296,23 +303,82 @@ gather_directories()
 # ALIAS: Generates the directories the links will be stored in
 generate_dir() { mkdir -p ${1}; }
 
+# How long should match sleep?
+# Inputs: ${1} seconds to sleep
+match_sleep() 
+{ 
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  if [[ -e "${script_path}/ft_config/ft_config_turbo.on" ]]; then
+    debug_out " File Match - TURBO ENABLED - Skipping Match Sleep"
+  else
+    sleep ${1}; 
+  fi
+  return 0;
+}
+
 files_match()
+{
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  local myvar=`match_check_snapshot ${file_name}`;
+  debug_out " File Match - COMPAT MATCHING FILES NOW ${myvar}"
+  return $myvar;
+}
+
+# Take a snapshot of file metadata for matching
+# Inputs: ${1} Filename
+match_take_snapshot()
+{
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  debug_out " File Match - Snapshotting Sourcefile Metadata"
+  file_size=`stat -c %s ${1}`   # Get Filesize
+  file_mtime=`stat -c %Y ${1}`   # Get Last Written To in Epoch
+}
+
+# Check against our last snapshot
+# Inputs: ${1} Filename
+# Outputs: 0 on success, 1 on fail, -1 on nonexistant
+match_check_snapshot() 
+{
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  debug_out " File Match - Verifying Match"
+  match_sleep 2; # Snooze for a couple seconds, waiting for mtimes to change?
+  if [[ -e ${1} ]]; then # If file still exists
+    file_size_new=`stat -c %s ${1}`   # Get Filesize
+    file_mtime_new=`stat -c %Y ${1}`   # Get Last Written To in Epoch
+    if [[ `match_files` -eq 1 ]]; then # Check to see if they match
+        debug_out "  File [MISMATCH] -- SKIPPING THIS FILE"
+        return 1; # Bail out
+      else
+        debug_out "  File [MATCH] -- Operation Proceeding!"
+        return 0;
+    fi 
+  else
+    debug_out "  File [MISSING] -- SKIPPING THIS FILE"
+    return -1; # Bail out early
+  fi
+}
+
+match_files()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   if [[ "${file_size}" -eq "${file_size_new}" ]];
     then
-      debug_out " File Size [MATCH] was: ${file_size} now: ${file_size_new}"
+      debug_out "  File [MATCH] Size was: ${file_size} now: ${file_size_new}"
       if [[ "${file_mtime}" -eq "${file_mtime_new}" ]];
         then
-          debug_out " File mTime [MATCH] was: ${file_mtime} now: ${file_mtime_new}"
+          debug_out "  File [MATCH] mTime was: ${file_mtime} now: ${file_mtime_new}"
           return 0; # Success
         else
-          debug_out " File mTime [MISMATCH] was: ${file_mtime} now: ${file_mtime_new}"
+          debug_out "  File [MISMATCH] mTime was: ${file_mtime} now: ${file_mtime_new}"
           return ${E_MISMATCH};
       fi
     else
-    debug_out " File Size [MISMATCH] was: ${file_size} now: ${file_size_new}"
+    debug_out "  File [MISMATCH] Size was: ${file_size} now: ${file_size_new}"
     return ${E_MISMATCH};
   fi
 }

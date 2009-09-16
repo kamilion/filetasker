@@ -52,10 +52,7 @@ fi
 # Error Codes
 # -----------
 
-
 E_BADARGS=65   # Wrong number of arguments passed to script.
-E_MISSINGFILE=66 # Couldn't find a file
-E_MISMATCH=67 # File size/mtime didn't match
 
 # -----------
 # Arrays
@@ -121,7 +118,7 @@ fi
 
 debug_out "------"
 debug_out "LOG SECTION BEGIN"
-debug_out "FuncDebug:" ${BASH_SOURCE} "now executing with ${#@} params:" ${@}
+debug_out "Starting up:" `basename ${BASH_SOURCE}` "now executing with ${#ft_args} params:" ${ft_args[@]}
 
 
 # Set up ft environment from ft_common_ops.sh
