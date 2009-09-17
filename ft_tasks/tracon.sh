@@ -101,8 +101,7 @@ task_pre()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
-  file_size=`stat -c %s ${file_name}`   # Get Filesize
-  file_mtime=`stat -c %Y ${file_name}`   # Get Last Written To in Epoch
+  match_take_snapshot ${file_name} # Take a snapshot of the file
   # Parse the filename into $ar_file_name
   parse_filename ${file_name}
   # Get the date from the directory the file was stored in.
@@ -118,6 +117,9 @@ task()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  
+  make_line_header "TRACON Working on ${1}"
+  
   local my_file_name=${file_name}
   task_pre ${my_file_name}
 
@@ -133,16 +135,8 @@ task_post()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
-  debug_out " Sleeping for 2 seconds for mtime check..."; sleep 2; # Snooze for a couple seconds, waiting for mtimes to change?
-  file_size_new=`stat -c %s ${file_name}`   # Get Filesize
-  file_mtime_new=`stat -c %Y ${file_name}`   # Get Last Written To in Epoch  
-  if [[ files_match ]];
-   then
-    debug_out " Files MATCH  -- PROCESSING THIS FILE"
-   else
-    debug_out " Files MISMATCH -- IGNORING THIS FILE"
-    return ${E_MISMATCH}; # Bail out early
-  fi
+  if [[ `match_check_snapshot ${file_name}` ]]; then debug_out " TASK SAYS FILES MISMATCH"; return ${E_MISMATCH}; fi # Bail out early
+  
   # Dated Directory needs to be generated from the timestamp.
   generate_yyyy_mm_dd_date_dir_from_epoch ${file_epoch}
   # Set the right dated target path (date_dir has trailing /)
