@@ -284,9 +284,6 @@ source ${script_path}/ft_common/ft_logging_ops.sh
 # Load File Operation Functions
 source ${script_path}/ft_common/ft_file_ops.sh
 
-# Load LinkList Operation Functions
-source ${script_path}/ft_common/ft_linklist_ops.sh
-
 # -----------
 # Date Functions
 # -----------
