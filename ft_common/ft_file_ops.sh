@@ -394,7 +394,7 @@ check_and_compress_gzip_file()
       debug_out " File is already compressed with gzip." # We're already gzipped.
     else
       debug_out " File not compressed. Compressing with gzip..."
-      if ["${selected_subtask}" == "debug"];
+      if [[ "${selected_subtask}" == "debug" ]];
         then
           debug_out " Skipped compression, in debug mode."
         else
