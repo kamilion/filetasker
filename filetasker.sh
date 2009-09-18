@@ -1,7 +1,7 @@
 #!/bin/bash
 # -----------
 # FileTasker Script
-ftask_version="V0.7r5"
+ftask_version="V0.7r6"
 # Output Initial Greeting
 echo ""
 echo " FileTasker ${ftask_version}"
@@ -92,7 +92,7 @@ subtask_name=${ft_args[1]}
 # Were we passed a task? If not, bail out now.
 MIN_NUM_ARGS=1
 # Make sure [ doesn't barf with untyped variable vs String - Quote it!
-if [ "${#}" -lt "${MIN_NUM_ARGS}" ]
+if [[ "${#}" -lt "${MIN_NUM_ARGS}" ]]
   then
     echo "   Error: No taskfile specified."
     load_task ft_help; # Unspecified Error
@@ -103,7 +103,7 @@ if [ "${#}" -lt "${MIN_NUM_ARGS}" ]
     # Load Task
     load_task ${task_name}
     # Were we passed a subtask? If not, bail out now.
-    if [ "${subtask_name}" == "" ]
+    if [[ "${subtask_name}" == "" ]]
       then
         echo "   Error: No subtask specified."
         echo "   Supported Subtasks in $1: ${task_subtasks[@]}"
