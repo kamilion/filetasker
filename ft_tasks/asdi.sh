@@ -43,7 +43,7 @@ file_ext="asdi_xml"
 # Defaults to "."
 
 # For tasks with files in multiple directories.
-#ft_multidir=1
+ft_multidir=1
 
 # -----------
 # Paths
@@ -100,7 +100,7 @@ task_pre()
   # Get the date from the directory the file was stored in.
   parse_to_epoch_from_yyyymmdd_dir ${ar_file_name[1]}
   # Set the right dated source path
-  #source_path="${source_path}${dir_name}/" # ft_multidir disabled ##TODO: Write an if statement around here to check multidir
+  if [[ "$ft_multidir" -eq "1" ]]; then source_path="${source_path}${dir_name}/"; fi
   # Parse the full dated pathname afterwards
   parse_pathname ${source_path}
   return 0; # Success
@@ -134,8 +134,6 @@ task_post()
   generate_yyyy_mm_dd_date_dir_from_epoch ${file_epoch}
   # Set the right dated target path (date_dir has trailing /)
   target_path="${target_path}${date_dir}"
-  # Check/Create our destination directory (No args)
-  check_and_create_target_dirs
   # Perform the file operation (takes care of all paths for us)
   perform_fileop ${selected_subtask} ${orig_file_name} ${new_file_name}
   # TODO: Hash the target file.
@@ -161,8 +159,8 @@ task_init_hook()
     else
       # TODO: Add arg check for sourcetype
       if [[ "${subtask_args[0]}" != "" ]]; then
-          ldm_source=${subtask_args[0]}
-          source_base_path="${source_base_path}${ldm_source}/"
+          asdi_source=${subtask_args[0]}
+          source_base_path="${source_base_path}${asdi_source}/"
           source_path="${source_base_path}"
       fi
       # Too many params?

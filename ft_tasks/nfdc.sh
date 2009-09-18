@@ -51,6 +51,9 @@ file_ext=".gz"
 # For tasks with files in multiple directories.
 #ft_multidir=1
 
+# Turn on output compression for this task
+ft_output_compression="gzip"
+
 # -----------
 # Paths
 # -----------
@@ -139,12 +142,8 @@ task_post()
   generate_yyyymmdd_date_dir_from_epoch ${file_epoch}
   # Set the right dated target path (date_dir has trailing /)
   target_path="${target_path}${date_dir}"
-  # Check/Create our destination directory (No args)
-  check_and_create_target_dirs
   # Perform the file operation (takes care of all paths for us)
   perform_fileop ${selected_subtask} ${orig_file_name} ${new_file_name}
-  # We should compress data if it is not already.
-  check_and_compress_gzip_file ${new_file_name}
   # Set the original source & target path
   source_path="${source_base_path}"
   target_path="${target_base_path}"

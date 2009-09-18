@@ -78,7 +78,7 @@ compress_gzip_file ()
 {
   compress_gzip_file_pre ${1}
   echo "    Compressing" ${1}
-  gzip ${compress_flags:='-9'} ${1}
+  gzip ${compress_flags:='-9f'} ${1}
   compress_gzip_file_post ${1}
 }
 
@@ -100,7 +100,23 @@ move_file()
 {
   move_file_pre ${1} ${2}
   echo -e "    Moving" ${1} "\n    to" ${2}
-  mv ${move_flags:='-u'} ${1} ${2}
+  if [[ -e ${2} ]]; then
+    # Yes, it exists.
+    if [[ -h ${2} ]]; then
+      # It's a link. Clobber/update it.
+      debug_out "  Target link already exists. Overwriting."
+      rm ${2}
+      mv ${move_flags:='-f'} ${1} ${2}
+    else
+      # It's not a link. Don't clobber it.
+      debug_out "  Target file already exists. Keeping existing."
+      return;
+    fi
+  else
+    # No existing file. Make one.
+    debug_out "  Target does not exist. Creating file."
+    mv ${move_flags:='-f'} ${1} ${2}
+  fi
   move_file_post ${1} ${2}
 }
 
@@ -111,7 +127,23 @@ copy_file()
 {
   copy_file_pre ${1} ${2}
   echo -e "    Copying" ${1} "\n    to" ${2}
-  cp ${copy_flags:='-u'} ${1} ${2}
+  if [[ -e ${2} ]]; then
+    # Yes, it exists.
+    if [[ -h ${2} ]]; then
+      # It's a link. Clobber/update it.
+      debug_out "  Target link already exists. Overwriting."
+      rm ${2}
+      cp ${copy_flags:="-f"} ${1} ${2}
+    else
+      # It's not a link. Don't clobber it.
+      debug_out "  Target file already exists. Keeping existing."
+      return;
+    fi
+  else
+    # No existing file. Make one.
+    debug_out "  Target does not exist. Creating file."
+    cp ${copy_flags:='-f'} ${1} ${2}
+  fi
   copy_file_post ${1} ${2}
 }
 
@@ -122,7 +154,22 @@ link_file()
 {
   link_file_pre ${1} ${2}
   echo -e "    Linking" ${1} "\n    to" ${2}
-  cp  ${link_flags:='-su'} ${1} ${2}
+  if [[ -e ${2} ]]; then
+    # Yes, it exists.
+    if [[ -h ${2} ]]; then
+      # It's a link. Clobber/update it.
+      debug_out "  Target link already exists. Overwriting link."
+      ln  ${link_flags:='-sf'} ${1} ${2}
+    else
+      # It's not a link. Don't clobber it.
+      debug_out "  Target file already exists. Keeping existing."
+      return;
+    fi
+  else
+    # No existing link. Make one.
+    debug_out "  Target does not exist. Creating link."
+    ln  ${link_flags:='-sf'} ${1} ${2}
+  fi
   link_file_post ${1} ${2}
 }
 
@@ -144,11 +191,16 @@ debug_file()
   debug_file_post ${1} ${2}
 }
 
+perform_fileop_post() { :; }
 # Dummy fileop function
 perform_fileop()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  # Update the linklist paths if that feature is enabled.
+  if [[ -e "${script_path}/ft_config/ft_config_gen_linklist.on" ]]; then update_linklist_paths; fi
+  # Check and create our target directories
+  check_and_create_target_dirs
   # Perform the selected file operation
   debug_out " Performing subtask: ${1}"
   case "${1}" in
@@ -166,6 +218,18 @@ perform_fileop()
     debug_file ${source_path}${2} ${target_path}${3}
   ;;
   esac
+  # Post operation work
+  if [[ $ft_output_compression == "gzip" ]]; # Is compression on?
+    then # We need to handle filename changes from compression
+      check_and_compress_gzip_file ${3}; # Run the compressor
+      if [[ $? -eq "-1"  ]]; # Did the filename change? (-1)
+        then perform_fileop_post "${3}.gz"; # Filename did change, append gz.
+        else perform_fileop_post ${3}; # Filename did not change, pass on unchanged.
+      fi
+    else # Compression is off
+      perform_fileop_post ${3}; # Compression is off, filename did not change.
+      update_linklist ${3}; # Disabling compression bypasses the linklist hook there.
+  fi
 }
 
 # Pathname Parser
@@ -392,14 +456,20 @@ check_and_compress_gzip_file()
   if [[ "${is_gzip_ext}" == ".gz" ]];
     then
       debug_out " File is already compressed with gzip." # We're already gzipped.
+      if [[ -e "${script_path}/ft_config/ft_config_gen_linklist.on" ]]; then update_linklist ${1}; fi
+      return 0; # Success, already compressed, don't change filename
     else
       debug_out " File not compressed. Compressing with gzip..."
       if [[ "${selected_subtask}" == "debug" ]];
         then
           debug_out " Skipped compression, in debug mode."
+          return 0; # Success, nothing done
         else
           compress_gzip_file ${target_path}${1} # Compress the file.
+          if [[ -e "${script_path}/ft_config/ft_config_gen_linklist.on" ]]; then update_linklist "${1}.gz"; fi
+          return -1; # Success, filename changed
       fi
+      return 0; # Success, nothing done?
   fi
 }
 
@@ -416,6 +486,30 @@ check_and_decompress_gzip_file()
     else
       debug_out " File is already uncompressed."
   fi
+}
+
+# Linklist operations
+add_to_linklist() { echo ${1} >> ${linkfile_path}linklog.${debug_filename}; }
+add_to_linkdir() { cp -sf ${target_path}${1} ${linkdir_path}; }
+update_linklist()
+{
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  if [[ -e "${script_path}/ft_config/ft_config_gen_linklist.on" ]]; then
+    debug_out "  LinkList: Now linking ${1} to ${linkdir_path}" 
+    add_to_linkdir ${1}
+    add_to_linklist ${1}
+  fi
+}
+# Updates the variables during a running task
+update_linklist_paths()
+{
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  linklist_path="${target_base_path}dblinks/";
+  linkdir_path="${linklist_path}";
+  linkfile_path="${linkdir_path}linkfiles/";
+  generate_dir ${linkfile_path}
 }
 
 # End Sub Routines

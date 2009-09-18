@@ -45,6 +45,9 @@ file_ext=".grib"
 # For tasks with files in multiple directories.
 ft_multidir=1
 
+# Turn on output compression for this task
+ft_output_compression="gzip"
+
 # Gzip prompts by default if we don't force compression.
 compress_flags="-9f"
 
@@ -102,7 +105,7 @@ task_pre()
   # Get the date from the directory the file was stored in.
   parse_to_epoch_from_yyyymmdd_dir ${dir_name}
   # Set the right dated source path
-  source_path="${source_path}${dir_name}/"
+  if [[ "$ft_multidir" -eq "1" ]]; then source_path="${source_path}${dir_name}/"; fi
   # Parse the full dated pathname afterwards
   parse_pathname ${source_path}
   return 0; # Success
@@ -136,12 +139,8 @@ task_post()
   generate_yyyy_mm_dd_date_dir_from_epoch ${file_epoch}
   # Set the right dated target path (date_dir has trailing /)
   target_path="${target_path}${date_dir}${ldm_source}/"
-  # Check/Create our destination directory (No args)
-  check_and_create_target_dirs
   # Perform the file operation (takes care of all paths for us)
   perform_fileop ${selected_subtask} ${orig_file_name} ${new_file_name}
-  # We should compress LDM data if it is not already.
-  check_and_compress_gzip_file ${new_file_name}
   # Set the original source & target path
   source_path="${source_base_path}"
   target_path="${target_base_path}"
