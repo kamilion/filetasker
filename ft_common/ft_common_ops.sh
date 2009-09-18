@@ -72,24 +72,20 @@ message_output()
 # Trim the logfile if it gets too big
 trim_log()
 {
-  log_size=`stat -c %s ${debug_path}${debug_filename}`   # Get Filesize
+  log_size=`stat -c %s ${debug_path}log.${debug_filename}`   # Get Filesize
   if [ "${log_size}" -gt "${debug_logfile_maxsize}" ]; # if it gets too big...
   then
     echo "   Trimming log... ( ${log_size} bytes )"
 
     # Compress the old logfile
     echo "   Compressing old log..."
-    compress_gzip_file ${debug_path}${debug_filename}
+    compress_gzip_file ${debug_path}log.${debug_filename}
   else
     echo "   Log does not need trimming. ( ${log_size} bytes )"
   fi
 }
 
 # Simple little append logger and console dumper
-# Output debug information to console
-debug_console_output="N"
-# Output debug information to trace file
-debug_tracefile_output="Y"
 # Logs over 100KB are automatically gzipped.
 debug_logfile_maxsize=100000
 # Path to write tracefile logs to
@@ -100,15 +96,15 @@ debug_file_date=`date +%Y%0m%0d_%0H%0M%0S`
 debug_filename="filetasker.log"
 debug_out()
 {
-  if [ ${debug_console_output} == "Y" ] 
+  if [[ -e "${script_path}/ft_config/ft_config_narration.on" ]] 
   then  
     echo "   Debug: $@" 
   fi
-  if [ ${debug_tracefile_output} == "Y" ]
+  if [[ -e "${script_path}/ft_config/ft_config_logging.on" ]]
   then
     # Bugfix R207 - Add -e to echo to enable escapes
     # Bugfix R207 - Add \r to generate a carrage return for Windows' Notepad
-    echo -e "("`date '+%F %T'`"): ${@}\r" >> ${debug_path}${debug_filename}
+    echo -e "("`date '+%F %T'`"): ${@}\r" >> ${debug_path}log.${debug_filename}
   fi
 }
 
