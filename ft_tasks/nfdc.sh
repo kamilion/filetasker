@@ -108,7 +108,7 @@ task_pre()
   # Get the date from the directory the file was stored in.
   parse_to_epoch_from_yyyymmdd_dir ${ar_file_name[2]:4}
   # Set the right dated source path
-  # source_path="${source_path}${dir_name}/"
+  if [[ "$ft_multidir" -eq "1" ]]; then source_path="${source_base_path}${dir_name}/"; fi
   # Parse the full dated pathname afterwards
   parse_pathname ${source_path}
   return 0; # Success
@@ -136,7 +136,7 @@ task_post()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
-  if [[ `match_check_snapshot ${file_name}` ]]; then debug_out " TASK SAYS FILES MISMATCH"; return ${E_MISMATCH}; fi # Bail out early
+  if match_check_snapshot ${file_name}; then :; else return ${E_MISMATCH}; fi # Bail out early
 
   # Dated Directory needs to be generated from the timestamp.
   generate_yyyymmdd_date_dir_from_epoch ${file_epoch}

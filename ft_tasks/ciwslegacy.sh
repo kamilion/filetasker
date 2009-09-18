@@ -115,7 +115,7 @@ task_post()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
-  if [[ `match_check_snapshot ${file_name}` ]]; then debug_out " TASK SAYS FILES MISMATCH"; return ${E_MISMATCH}; fi # Bail out early
+  if match_check_snapshot ${file_name}; then :; else return ${E_MISMATCH}; fi # Bail out early
 
   # Dated Directory needs to be generated from the timestamp.
   generate_yyyy_mm_dd_date_dir_from_epoch ${file_epoch}
