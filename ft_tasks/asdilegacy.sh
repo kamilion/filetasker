@@ -31,7 +31,7 @@ task_subtasks=( debug link copy move )
 # -----------
 # Strings
 # -----------
-task_name="asditext"
+task_name="asdilegacy"
 debug_filename="${debug_file_date}_${task_name}.log"
 
 # Look for files of type...
