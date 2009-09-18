@@ -198,7 +198,7 @@ perform_fileop()
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   # Update the linklist paths if that feature is enabled.
-  if [[ -e "${script_path}/ft_config/ft_config_gen_linklist.on" ]]; then update_linklist_paths; fi
+  if [[ -e "${script_path}/ft_config/ft_config_gen_filelist.on" ]]; then update_linklist_paths; fi
   # Check and create our target directories
   check_and_create_target_dirs
   # Perform the selected file operation
@@ -456,18 +456,20 @@ check_and_compress_gzip_file()
   if [[ "${is_gzip_ext}" == ".gz" ]];
     then
       debug_out " File is already compressed with gzip." # We're already gzipped.
-      if [[ -e "${script_path}/ft_config/ft_config_gen_linklist.on" ]]; then update_linklist ${1}; fi
+      if [[ "${selected_subtask}" != "debug" ]]; then # No targets to generate filelists or linklists in debug mode!
+          if [[ -e "${script_path}/ft_config/ft_config_gen_filelist.on" ]]; then update_linklist ${1}; fi
+      fi
       return 0; # Success, already compressed, don't change filename
     else
       debug_out " File not compressed. Compressing with gzip..."
-      if [[ "${selected_subtask}" == "debug" ]];
-        then
+      if [[ "${selected_subtask}" != "debug" ]];
+        then # Not debug mode, compress the file.
+          compress_gzip_file ${target_path}${1} # Compress the file.
+          if [[ -e "${script_path}/ft_config/ft_config_gen_filelist.on" ]]; then update_linklist "${1}.gz"; fi
+          return -1; # Success, filename changed
+        else # No need to do anything if we're in debug mode.
           debug_out " Skipped compression, in debug mode."
           return 0; # Success, nothing done
-        else
-          compress_gzip_file ${target_path}${1} # Compress the file.
-          if [[ -e "${script_path}/ft_config/ft_config_gen_linklist.on" ]]; then update_linklist "${1}.gz"; fi
-          return -1; # Success, filename changed
       fi
       return 0; # Success, nothing done?
   fi
@@ -489,16 +491,18 @@ check_and_decompress_gzip_file()
 }
 
 # Linklist operations
-add_to_linklist() { echo ${1} >> ${linkfile_path}linklog.${debug_filename}; }
-add_to_linkdir() { cp -sf ${target_path}${1} ${linkdir_path}; }
+add_to_linklist() { echo ${target_path}${1} >> ${linkfile_path}linklog.${debug_filename}; }
+add_to_linkdir() { ln -sf ${target_path}${1} ${linkdir_path}; }
 update_linklist()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   if [[ -e "${script_path}/ft_config/ft_config_gen_linklist.on" ]]; then
     debug_out "  LinkList: Now linking ${1} to ${linkdir_path}" 
-    add_to_linkdir ${1}
-    add_to_linklist ${1}
+    add_to_linkdir ${1} # Add the link to the linkdir if linklist is on.
+  fi
+  if [[ -e "${script_path}/ft_config/ft_config_gen_filelist.on" ]]; then 
+    add_to_linklist ${1} # This should always happen even if linklist is off, if filelist is on.
   fi
 }
 # Updates the variables during a running task
