@@ -104,13 +104,14 @@ move_file()
     # Yes, it exists.
     if [[ -h ${2} ]]; then
       # It's a link. Clobber/update it.
-      debug_out "  Target link already exists. Overwriting."
+      debug_out "  Target link already exists. Overwriting Link with File."
       rm ${2}
       mv ${move_flags:='-f'} ${1} ${2}
     else
-      # It's not a link. Don't clobber it.
-      debug_out "  Target file already exists. Keeping existing."
-      return;
+      # It's not a link. Clobber/Move over it.
+      debug_out "  Target file already exists. Moving file with Overwrite."
+      rm ${2}
+      mv ${move_flags:='-f'} ${1} ${2}
     fi
   else
     # No existing file. Make one.
@@ -135,7 +136,7 @@ copy_file()
       rm ${2}
       cp ${copy_flags:="-f"} ${1} ${2}
     else
-      # It's not a link. Don't clobber it.
+      # It's not a link. Don't clobber existing files during copy.
       debug_out "  Target file already exists. Keeping existing."
       return;
     fi
@@ -413,12 +414,12 @@ match_check_snapshot()
   if [[ -e ${1} ]]; then # If file still exists
     file_size_new=`stat -c %s ${1}`   # Get Filesize
     file_mtime_new=`stat -c %Y ${1}`   # Get Last Written To in Epoch
-    if [[ `match_files` -eq 1 ]]; then # Check to see if they match
-        debug_out "  File [MISMATCH] -- SKIPPING THIS FILE"
-        return 1; # Bail out
-      else
+    if match_files; then # Check to see if they match
         debug_out "  File [MATCH] -- Operation Proceeding!"
         return 0;
+      else
+        debug_out "  File [MISMATCH] -- SKIPPING THIS FILE"
+        return 1; # Bail out
     fi 
   else
     debug_out "  File [MISSING] -- SKIPPING THIS FILE"
@@ -491,17 +492,18 @@ check_and_decompress_gzip_file()
 }
 
 # Linklist operations
-add_to_linklist() { echo ${target_path}${1} >> ${linkfile_path}linklog.${debug_filename}; }
+add_to_linklist() { echo ${target_path}${1} >> ${debug_path}filelist.${debug_filename}; }
 add_to_linkdir() { ln -sf ${target_path}${1} ${linkdir_path}; }
 update_linklist()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
-  if [[ -e "${script_path}/ft_config/ft_config_gen_linklist.on" ]]; then
+  if [[ -e "${script_path}/ft_config/ft_config_gen_linkdir.on" ]]; then
     debug_out "  LinkList: Now linking ${1} to ${linkdir_path}" 
     add_to_linkdir ${1} # Add the link to the linkdir if linklist is on.
   fi
   if [[ -e "${script_path}/ft_config/ft_config_gen_filelist.on" ]]; then 
+    debug_out "  LinkList: Now adding ${1} to list" 
     add_to_linklist ${1} # This should always happen even if linklist is off, if filelist is on.
   fi
 }
@@ -510,10 +512,8 @@ update_linklist_paths()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
-  linklist_path="${target_base_path}dblinks/";
-  linkdir_path="${linklist_path}";
-  linkfile_path="${linkdir_path}linkfiles/";
-  generate_dir ${linkfile_path}
+  linkdir_path="${target_base_path}linkdir/";
+  generate_dir ${linkdir_path}
 }
 
 # End Sub Routines
