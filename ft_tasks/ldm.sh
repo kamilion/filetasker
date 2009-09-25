@@ -32,8 +32,8 @@ task_subtasks=( debug link copy move )
 # Strings
 # -----------
 task_name="ldm"
-# LDM's debug filename is overridden in task_init_hook below!
-debug_filename="${debug_file_date}_${task_name}.log"
+# LDM's log filename is overridden in task_init_hook below!
+logfile_filename="${task_name}"
 
 # Look for files of type...
 file_ext=".grib"
@@ -166,7 +166,7 @@ task_init_hook()
           source_base_path="${source_base_path}${ldm_source}/"
           source_path="${source_base_path}"
           # Add the Forecast Time to the log filename.
-          debug_filename="${debug_file_date}_${task_name}_${ldm_source}.log"
+          logfile_filename="${task_name}_${ldm_source}"
       fi
       # Too many params?
       if [[ "${subtask_args[1]}" != "" ]]; then

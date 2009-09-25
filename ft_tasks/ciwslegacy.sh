@@ -32,7 +32,8 @@ task_subtasks=( debug link copy move )
 # Strings
 # -----------
 task_name="ciwslegacy"
-debug_filename="${debug_file_date}_${task_name}.log"
+
+logfile_filename="${task_name}"
 
 # Look for files of type...
 file_ext=".h5.gz"

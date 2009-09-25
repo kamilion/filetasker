@@ -39,8 +39,8 @@ task_subtasks=( debug link copy move )
 # Strings
 # -----------
 task_name="center"
-# CENTER's debug filename is overridden in task_init_hook below!
-debug_filename="${debug_file_date}_${task_name}.log"
+
+logfile_filename="${task_name}"
 
 # Look for files of type...
 file_ext=".gz"
