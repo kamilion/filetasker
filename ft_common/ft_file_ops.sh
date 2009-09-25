@@ -492,7 +492,7 @@ check_and_decompress_gzip_file()
 }
 
 # Linklist operations
-add_to_linklist() { echo ${target_path}${1} >> ${logfile_path}${logfile_date}${logfile_filename}.filelist.log; }
+add_to_linklist() { echo ${target_path}${1} >> ${logfile_path}${logfile_date}.${logfile_filename}.filelist.log; }
 add_to_linkdir() { ln -sf ${target_path}${1} ${linkdir_path}; }
 update_linklist()
 {
