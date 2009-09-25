@@ -34,11 +34,11 @@
 # -----------
 
 # Start Debugging functions
-MSG_DEBUG=20
 MSG_CRITICAL=15
 MSG_TRACE=10
 MSG_NOTICE=5
 MSG_INFO=1
+MSG_DEBUG=0
 
 # Compatibility for older tasks
 debug_out() { message_output ${MSG_DEBUG} "$@"; }
