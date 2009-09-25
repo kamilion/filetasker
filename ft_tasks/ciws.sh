@@ -69,11 +69,11 @@ target_path="${target_base_path}"
 parse_to_epoch_from_date_ciws()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   local file_datestamp=${1}
   file_epoch=`date +%s -d "${file_datestamp:0:4}-${file_datestamp:4:2}-${file_datestamp:6:2} ${file_datestamp:9:2}:${file_datestamp:11:2}:${file_datestamp:13:2} UTC"`
   file_timestamp=`date -u -d @${file_epoch}`
-  debug_out " Parsed Filedate: ${file_datestamp} - Date: ${file_datestamp:0:4}-${file_datestamp:4:2}-${file_datestamp:6:2} Time: ${file_datestamp:9:2}:${file_datestamp:11:2}:${file_datestamp:13:2} Zulu - Epoch: @${file_epoch} or ${file_timestamp}"
+  message_output ${MSG_INFO} " Parsed Filedate: ${file_datestamp} - Date: ${file_datestamp:0:4}-${file_datestamp:4:2}-${file_datestamp:6:2} Time: ${file_datestamp:9:2}:${file_datestamp:11:2}:${file_datestamp:13:2} Zulu - Epoch: @${file_epoch} or ${file_timestamp}"
 }
 
 #Main Transformation Worker Function
@@ -83,7 +83,7 @@ transform_operations_post () { :; }
 transform_operations()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   local my_file_name=${1}
   transform_operations_pre ${my_file_name}
   # Remove the first four filename indexes (edu, mit, ll, and wx)
@@ -99,7 +99,7 @@ transform_operations()
 task_pre()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   match_take_snapshot ${file_name} # Take a snapshot of the file
   # Parse the filename into an array
   parse_filename ${file_name}
@@ -111,7 +111,7 @@ task_pre()
 task()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
 
   make_line_header "CIWS Working on ${1}"
   
@@ -128,7 +128,7 @@ task()
 task_post()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   if match_check_snapshot ${file_name}; then :; else return ${E_MISMATCH}; fi # Bail out early
 
   # Dated Directory needs to be generated from the timestamp.

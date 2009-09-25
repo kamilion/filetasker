@@ -42,13 +42,9 @@ MSG_STATUS=7
 MSG_INFO=5
 MSG_CRITICAL=2
 MSG_ERROR=1
-MSG_DEBUG=0
 
 sev_name() { # Meant to be called via backticks.
   case "${1}" in
-  "0" )
-    echo "(FIXME) OLD_DEBUG"
-  ;;
   "1" )
     echo "   ERROR"
   ;;
@@ -74,10 +70,6 @@ sev_name() { # Meant to be called via backticks.
   esac
 }
 
-# Compatibility for older tasks
-debug_out() { message_output ${MSG_DEBUG} "$*"; }
-
-# Simple little append logger and console dumper
 message_output()
 {
   local log_level=${1}
