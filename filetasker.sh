@@ -44,6 +44,9 @@ fi
 # End Program Information
 # -----------
 
+# Source Global Configuration
+source ${script_path}/ft_config/ft_config_global.sh
+
 # -----------
 # Variables
 # -----------
@@ -66,8 +69,7 @@ E_BADARGS=65   # Wrong number of arguments passed to script.
 # Paths
 # -----------
 
-# Our root operational directory.
-main_path_prefix="/workspace/filetasker/home/"
+# Set our root operational directories from ft_config.
 source_path_prefix=${main_path_prefix}
 target_path_prefix=${main_path_prefix}
 
