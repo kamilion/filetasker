@@ -59,10 +59,10 @@ ft_output_compression="gzip"
 # -----------
 
 # Source files are here
-source_base_path="${source_path_prefix}weather/FAAaces/"
+source_base_path="${source_path_prefix}weather/faa_aces/"
 source_path="${source_base_path}"
 # Target files are here
-target_base_path="${target_path_prefix}data/FAAaces/"
+target_base_path="${target_path_prefix}data/faa_aces/"
 target_path="${target_base_path}"
 
 
