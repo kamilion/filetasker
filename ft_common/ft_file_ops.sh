@@ -104,18 +104,18 @@ move_file()
     # Yes, it exists.
     if [[ -h ${2} ]]; then
       # It's a link. Clobber/update it.
-      debug_out "  Target link already exists. Overwriting Link with File."
+      message_output ${MSG_STATUS} "  Target link already exists. Overwriting Link with File."
       rm ${2}
       mv ${move_flags:='-f'} ${1} ${2}
     else
       # It's not a link. Clobber/Move over it.
-      debug_out "  Target file already exists. Moving file with Overwrite."
+      message_output ${MSG_STATUS} "  Target file already exists. Moving file with Overwrite."
       rm ${2}
       mv ${move_flags:='-f'} ${1} ${2}
     fi
   else
     # No existing file. Make one.
-    debug_out "  Target does not exist. Creating file."
+    message_output ${MSG_STATUS} "  Target does not exist. Creating file."
     mv ${move_flags:='-f'} ${1} ${2}
   fi
   move_file_post ${1} ${2}
@@ -132,17 +132,17 @@ copy_file()
     # Yes, it exists.
     if [[ -h ${2} ]]; then
       # It's a link. Clobber/update it.
-      debug_out "  Target link already exists. Overwriting."
+      message_output ${MSG_STATUS} "  Target link already exists. Overwriting."
       rm ${2}
       cp ${copy_flags:="-f"} ${1} ${2}
     else
       # It's not a link. Don't clobber existing files during copy.
-      debug_out "  Target file already exists. Keeping existing."
+      message_output ${MSG_STATUS} "  Target file already exists. Keeping existing."
       return;
     fi
   else
     # No existing file. Make one.
-    debug_out "  Target does not exist. Creating file."
+    message_output ${MSG_STATUS} "  Target does not exist. Creating file."
     cp ${copy_flags:='-f'} ${1} ${2}
   fi
   copy_file_post ${1} ${2}
@@ -159,16 +159,16 @@ link_file()
     # Yes, it exists.
     if [[ -h ${2} ]]; then
       # It's a link. Clobber/update it.
-      debug_out "  Target link already exists. Overwriting link."
+      message_output ${MSG_STATUS} "  Target link already exists. Overwriting link."
       ln  ${link_flags:='-sf'} ${1} ${2}
     else
       # It's not a link. Don't clobber it.
-      debug_out "  Target file already exists. Keeping existing."
+      message_output ${MSG_STATUS} "  Target file already exists. Keeping existing."
       return;
     fi
   else
     # No existing link. Make one.
-    debug_out "  Target does not exist. Creating link."
+    message_output ${MSG_STATUS} "  Target does not exist. Creating link."
     ln  ${link_flags:='-sf'} ${1} ${2}
   fi
   link_file_post ${1} ${2}
@@ -181,13 +181,13 @@ debug_file()
 {
   debug_file_pre ${1} ${2}
   echo "    -------------"
-  debug_out "  Old Filepath: ${source_path}"  
+  message_output ${MSG_INFO} "  Old Filepath: ${source_path}"  
   echo "    Old Filepath: ${source_path}"  
-  debug_out "  Old Filename: `basename ${1}`"
+  message_output ${MSG_INFO} "  Old Filename: `basename ${1}`"
   echo "    Old Filename: `basename ${1}`"
-  debug_out "  New Filepath: ${target_path}"
+  message_output ${MSG_INFO} "  New Filepath: ${target_path}"
   echo "    New Filepath: ${target_path}"
-  debug_out "  New Filename: `basename ${2}`"
+  message_output ${MSG_INFO} "  New Filename: `basename ${2}`"
   echo "    New Filename: `basename ${2}`"
   debug_file_post ${1} ${2}
 }
@@ -197,13 +197,13 @@ perform_fileop_post() { :; }
 perform_fileop()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   # Update the linklist paths if that feature is enabled.
   if [[ -e "${script_path}/ft_config/ft_config_gen_filelist.on" ]]; then update_linklist_paths; fi
   # Check and create our target directories
   check_and_create_target_dirs
   # Perform the selected file operation
-  debug_out " Performing subtask: ${1}"
+  message_output ${MSG_INFO} " Performing subtask: ${1}"
   case "${1}" in
   "link" )
     link_file ${source_path}${2} ${target_path}${3}
@@ -240,10 +240,10 @@ parse_pathname_post () { :; }
 parse_pathname()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   parse_pathname_pre ${@}
   ar_path_name=( $( echo ${1} | tr \'${parse_seperator:-"/"}\' ' ' ) )
-  debug_out " Parsed Pathname: ${#ar_path_name[@]} elements:" ${ar_path_name[@]}
+  message_output ${MSG_INFO} " Parsed Pathname: ${#ar_path_name[@]} elements:" ${ar_path_name[@]}
   parse_pathname_post ${ar_path_name}
 }
 
@@ -254,10 +254,10 @@ parse_filename_post () { :; }
 parse_filename()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   parse_filename_pre ${@}
   ar_file_name=( $( echo ${1} | tr \'${parse_seperator:-"."}\' ' ' ) )
-  debug_out " Parsed Filename: ${#ar_file_name[@]} elements:" ${ar_file_name[@]}
+  message_output ${MSG_INFO} " Parsed Filename: ${#ar_file_name[@]} elements:" ${ar_file_name[@]}
   parse_filename_post ${ar_file_name}
 }
 
@@ -268,7 +268,7 @@ build_filename_post () { :; }
 build_filename()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   build_filename_pre ${ar_file_name[@]}
   # Set up our locals
   local my_ar_file_name=${ar_file_name[@]}
@@ -288,7 +288,7 @@ build_filename()
 iterate_files()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   # Gather filenames into array
   filenames=( `ls -1t | grep "${file_ext}" | tr '\n' ' '` )
   echo  "   Found ${#filenames[@]} ${file_ext} files in ${PWD}/"
@@ -299,7 +299,7 @@ iterate_files()
       # Is this truly a file?
       if [[ -e "${file_name}" ]]; then
         # Yes, it's a file. Snapshot the old name, and call the task.
-        #debug_out " FOUND A FILE: ${file_name}"
+        #message_output ${MSG_NOTICE} " FOUND A FILE: ${file_name}"
         orig_file_name=${file_name}
         task ${file_name}
       fi
@@ -310,7 +310,7 @@ iterate_files()
 iterate_directories()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   if [[ ${ft_multidir} ]]; then
     echo "    Searching Multiple Source Directories."
     gather_directories
@@ -318,7 +318,7 @@ iterate_directories()
     # Otherwise this would read: for dir_name in ${DIRSTACK[@]}
     while [[ "${#DIRSTACK[@]}" -gt "1" ]]
       do
-        debug_out "Directory Stack Contents (${#DIRSTACK[@]}): ${DIRSTACK[@]}."
+        message_output ${MSG_INFO} "Directory Stack Contents (${#DIRSTACK[@]}): ${DIRSTACK[@]}."
         popd
         dir_name=`basename ${PWD}/`
         echo "    Traversed to ${dir_name}"
@@ -335,7 +335,7 @@ iterate_directories()
 gather_directories()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   IFS=$'\n'   # Enable for loops over items with spaces in their name
   # Magic Command to run to gather directory list
   local dirsource=`ls -1Ft | grep "/"`
@@ -352,7 +352,7 @@ gather_directories()
     do
       # Is this entry a directory?
       if [[ -d "${directory_name}" ]]; then
-        debug_out " FOUND A DIRECTORY:" `readlink -f ${directory_name}`
+        message_output ${MSG_INFO} " FOUND A DIRECTORY:" `readlink -f ${directory_name}`
         # Yep, it's a directory.
         # Add it to the Iterate list to discover the files inside.
         # NOTE: pushd -n will add to $DIRSTACK without changing $PWD.
@@ -373,9 +373,9 @@ generate_dir() { mkdir -p ${1}; }
 match_sleep() 
 { 
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   if [[ -e "${script_path}/ft_config/ft_config_turbo.on" ]]; then
-    debug_out " File Match - TURBO ENABLED - Skipping Match Sleep"
+    message_output ${MSG_NOTICE} " File Match - TURBO ENABLED - Skipping Match Sleep"
   else
     sleep ${1}; 
   fi
@@ -385,9 +385,9 @@ match_sleep()
 files_match()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   local myvar=`match_check_snapshot ${file_name}`;
-  debug_out " File Match - COMPAT MATCHING FILES NOW ${myvar}"
+  message_output ${MSG_NOTICE} " File Match - COMPAT MATCHING FILES NOW ${myvar}"
   return $myvar;
 }
 
@@ -396,8 +396,8 @@ files_match()
 match_take_snapshot()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
-  debug_out " File Match - Snapshotting Sourcefile Metadata"
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_INFO} " File Match - Snapshotting Sourcefile Metadata"
   file_size=`stat -c %s ${1}`   # Get Filesize
   file_mtime=`stat -c %Y ${1}`   # Get Last Written To in Epoch
 }
@@ -408,21 +408,21 @@ match_take_snapshot()
 match_check_snapshot() 
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
-  debug_out " File Match - Verifying Match"
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_INFO} " File Match - Verifying Match"
   match_sleep 2; # Snooze for a couple seconds, waiting for mtimes to change?
   if [[ -e ${1} ]]; then # If file still exists
     file_size_new=`stat -c %s ${1}`   # Get Filesize
     file_mtime_new=`stat -c %Y ${1}`   # Get Last Written To in Epoch
     if match_files; then # Check to see if they match
-        debug_out "  File [MATCH] -- Operation Proceeding!"
+        message_output ${MSG_NOTICE} "  File [MATCH] -- Operation Proceeding!"
         return 0;
       else
-        debug_out "  File [MISMATCH] -- SKIPPING THIS FILE"
+        message_output ${MSG_ERROR} "  File [MISMATCH] -- SKIPPING THIS FILE"
         return 1; # Bail out
     fi 
   else
-    debug_out "  File [MISSING] -- SKIPPING THIS FILE"
+    message_output ${MSG_ERROR} "  File [MISSING] -- SKIPPING THIS FILE"
     return -1; # Bail out early
   fi
 }
@@ -430,20 +430,20 @@ match_check_snapshot()
 match_files()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   if [[ "${file_size}" -eq "${file_size_new}" ]];
     then
-      debug_out "  File [MATCH] Size was: ${file_size} now: ${file_size_new}"
+      message_output ${MSG_NOTICE} "  File [MATCH] Size was: ${file_size} now: ${file_size_new}"
       if [[ "${file_mtime}" -eq "${file_mtime_new}" ]];
         then
-          debug_out "  File [MATCH] mTime was: ${file_mtime} now: ${file_mtime_new}"
+          message_output ${MSG_NOTICE} "  File [MATCH] mTime was: ${file_mtime} now: ${file_mtime_new}"
           return 0; # Success
         else
-          debug_out "  File [MISMATCH] mTime was: ${file_mtime} now: ${file_mtime_new}"
+          message_output ${MSG_ERROR} "  File [MISMATCH] mTime was: ${file_mtime} now: ${file_mtime_new}"
           return ${E_MISMATCH};
       fi
     else
-    debug_out "  File [MISMATCH] Size was: ${file_size} now: ${file_size_new}"
+    message_output ${MSG_ERROR} "  File [MISMATCH] Size was: ${file_size} now: ${file_size_new}"
     return ${E_MISMATCH};
   fi
 }
@@ -451,25 +451,25 @@ match_files()
 check_and_compress_gzip_file()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   local my_filename=${1}
   local is_gzip_ext=${my_filename:(-3)}  # Capture the last three characters of the filename
   if [[ "${is_gzip_ext}" == ".gz" ]];
     then
-      debug_out " File is already compressed with gzip." # We're already gzipped.
+      message_output ${MSG_STATUS} " File is already compressed with gzip." # We're already gzipped.
       if [[ "${selected_subtask}" != "debug" ]]; then # No targets to generate filelists or linklists in debug mode!
           if [[ -e "${script_path}/ft_config/ft_config_gen_filelist.on" ]]; then update_linklist ${1}; fi
       fi
       return 0; # Success, already compressed, don't change filename
     else
-      debug_out " File not compressed. Compressing with gzip..."
+      message_output ${MSG_NOTICE} " File not compressed. Compressing with gzip..."
       if [[ "${selected_subtask}" != "debug" ]];
         then # Not debug mode, compress the file.
           compress_gzip_file ${target_path}${1} # Compress the file.
           if [[ -e "${script_path}/ft_config/ft_config_gen_filelist.on" ]]; then update_linklist "${1}.gz"; fi
           return -1; # Success, filename changed
         else # No need to do anything if we're in debug mode.
-          debug_out " Skipped compression, in debug mode."
+          message_output ${MSG_INFO} " Skipped compression, in debug mode."
           return 0; # Success, nothing done
       fi
       return 0; # Success, nothing done?
@@ -479,15 +479,15 @@ check_and_compress_gzip_file()
 check_and_decompress_gzip_file()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   local my_filename=${1}
   local is_gzip_ext=${my_filename:(-3)}  # Capture the last three characters of the filename
   if [[ "${is_gzip_ext}" == ".gz" ]];
     then
-      debug_out " File is compressed with gzip. Decompressing..." # We're already gzipped.
+      message_output ${MSG_NOTICE} " File is compressed with gzip. Decompressing..." # We're already gzipped.
       decompress_gzip_file ${target_path}${1} # Decompress the file.
     else
-      debug_out " File is already uncompressed."
+      message_output ${MSG_INFO} " File is already uncompressed."
   fi
 }
 
@@ -497,13 +497,13 @@ add_to_linkdir() { ln -sf ${target_path}${1} ${linkdir_path}; }
 update_linklist()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   if [[ -e "${script_path}/ft_config/ft_config_gen_linkdir.on" ]]; then
-    debug_out "  LinkList: Now linking ${1} to ${linkdir_path}" 
+    message_output ${MSG_NOTICE} "  LinkList: Now linking ${1} to ${linkdir_path}" 
     add_to_linkdir ${1} # Add the link to the linkdir if linklist is on.
   fi
   if [[ -e "${script_path}/ft_config/ft_config_gen_filelist.on" ]]; then 
-    debug_out "  LinkList: Now adding ${1} to list" 
+    message_output ${MSG_NOTICE} "  LinkList: Now adding ${1} to list" 
     add_to_linklist ${1} # This should always happen even if linklist is off, if filelist is on.
   fi
 }
@@ -511,7 +511,7 @@ update_linklist()
 update_linklist_paths()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  debug_out "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   linkdir_path="${target_base_path}linkdir/";
   generate_dir ${linkdir_path}
 }

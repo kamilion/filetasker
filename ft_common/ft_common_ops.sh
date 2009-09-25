@@ -34,36 +34,70 @@
 # -----------
 
 # Start Debugging functions
-MSG_CRITICAL=15
-MSG_TRACE=10
-MSG_NOTICE=5
-MSG_INFO=1
+
+# These must match the sev_name translator.
+MSG_TRACE=20
+MSG_NOTICE=10
+MSG_STATUS=7
+MSG_INFO=5
+MSG_CRITICAL=2
+MSG_ERROR=1
 MSG_DEBUG=0
 
+sev_name() { # Meant to be called via backticks.
+  case "${1}" in
+  "0" )
+    echo "(FIXME) OLD_DEBUG"
+  ;;
+  "1" )
+    echo "   ERROR"
+  ;;
+  "2" )
+    echo "CRITICAL"
+  ;;
+  "5" )
+    echo "    INFO"
+  ;;
+  "7" )
+    echo "  STATUS"
+  ;;
+  "10" )
+    echo "  NOTICE"
+  ;;
+  "20" )
+    echo "   TRACE"
+  ;;
+  * )
+    # Default to UNKNOWN
+    echo "  UNKNOWN"
+  ;;
+  esac
+}
+
 # Compatibility for older tasks
-debug_out() { message_output ${MSG_DEBUG} "$@"; }
+debug_out() { message_output ${MSG_DEBUG} "$*"; }
 
 # Simple little append logger and console dumper
 message_output()
 {
   local log_level=${1}
-  local log_message=${2}
+  shift 1
+  local log_message=${@}
   local log_timestamp=`date '+%F %T'`
-  if [[ -e "${script_path}/ft_config/ft_config_narration.on" ]]
-  then  
-    echo "   Debug(SEV:${log_level}): $2" 
+  if [[ -e "${script_path}/ft_config/ft_config_narration.on" ]]; then
+    if [[ "${log_level}" -le "${MSG_NOTICE}" ]]; then # Narrate events
+      echo "   Narration (SEV:`sev_name ${log_level}`): ${log_message}";
+    fi
   fi
-  
-  if [[ -e "${script_path}/ft_config/ft_config_logging.on" ]]
-  then
-    # Bugfix R207 - Add -e & \r to generate a carrage return for Windows' Notepad
-    echo -e "(${log_timestamp})(SEV:${log_level}): ${2}\r" >> "${logfile_path}${logfile_date}.${logfile_filename}.log"
+  # Bugfix R207 - Add -e & \r to generate a carrage return for Windows' Notepad
+  if [[ -e "${script_path}/ft_config/ft_config_logging.on" ]]; then # Check if tracing is on.
+    if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then # Write *everything* to the tracelog.
+      echo -e "(${log_timestamp})(SEV:`sev_name ${log_level}`): ${log_message}\r" >> "${logfile_path}${logfile_date}.${logfile_filename}.trace.log";
+    fi
+    if [[ "${log_level}" -le "${MSG_NOTICE}" ]]; then # Write low severity events only to the normal log.
+      echo -e "(${log_timestamp})(SEV:`sev_name ${log_level}`): ${log_message}\r" >> "${logfile_path}${logfile_date}.${logfile_filename}.log";
+    fi
   fi
-  
-  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]
-  then
-    echo -e "(${log_timestamp})(SEV:${log_level}): ${2}\r" >> "${logfile_path}${logfile_date}.${logfile_filename}.trace.log"
-  fi  
 }
 
 # Trim the logfile if it gets too big
@@ -85,9 +119,9 @@ trim_log()
 make_line_header()
 {
   eval printf -v spacerline "%.s=" {1..${#1}}
-  debug_out "=======${spacerline}======="
-  debug_out "====== ${1} ======"
-  debug_out "=======${spacerline}======="
+  message_output ${MSG_INFO} "=======${spacerline}======="
+  message_output ${MSG_INFO} "====== ${1} ======"
+  message_output ${MSG_INFO} "=======${spacerline}======="
 }
 
 # Signal Traps
@@ -113,7 +147,7 @@ set_traps()
 debug_dump_output=N
 trap_bail_out()
 {
-  debug_out "  Trapped Signal ${1} (${2}), bailing out..."
+  message_output ${MSG_CRITICAL} "  Trapped Signal ${1} (${2}), bailing out..."
   echo "  Trapped Signal ${1} (${2}), bailing out..."
   debug_dump_output=Y
   quit_filetasker
@@ -124,7 +158,7 @@ trap_bail_out()
 trap_debug_dump()
 {
     echo "Call Stack:" ${FUNCNAME[@]}
-    debug_out "Call Stack:" ${FUNCNAME[@]}
+    message_output ${MSG_TRACE} "Call Stack:" ${FUNCNAME[@]}
 }
 
 trap_exit_dump()
@@ -231,7 +265,7 @@ quit_filetasker()
   # Log too big?
   echo "  Trimming log (If needed)..."
   # Close the log, show our times, then trim the log (Prevents leaving a one-line log after gz)
-  debug_out "LOG SECTION END -- Script took ${SECONDS} seconds to complete all operations."
+  message_output ${MSG_STATUS} "LOG SECTION END -- Script took ${SECONDS} seconds to complete all operations."
   trim_log
   echo " Script took ${SECONDS} seconds to execute."
   echo ""

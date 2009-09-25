@@ -118,9 +118,9 @@ if [[ "${#}" -lt "${MIN_NUM_ARGS}" ]]
     fi    
 fi
 
-debug_out "------"
-debug_out "LOG SECTION BEGIN"
-debug_out "Starting up:" `basename ${BASH_SOURCE}` "now executing with ${#ft_args} params:" ${ft_args[@]}
+message_output ${MSG_INFO} "------"
+message_output ${MSG_INFO} "LOG SECTION BEGIN"
+message_output ${MSG_STATUS} "Starting up:" `basename ${BASH_SOURCE}` "now executing with ${#ft_args} params:" ${ft_args[@]}
 
 
 # Set up ft environment from ft_common_ops.sh
