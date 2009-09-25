@@ -34,19 +34,16 @@
 # -----------
 
 # Start Debugging functions
-
-# Path to write logs & tracefiles to
-logfile_path="${script_path}/ft_logs/"
-# Define the logfilename backup 'generic' date format: YYYYMMDD_HHMMSS
-logfile_backup_date=`date +%Y%0m%0d_%0H%0M%0S`
-# This is the default log file name if a task does not redefine it.
-logfile_filename="filetasker.log"
-
+MSG_DEBUG=20
 MSG_CRITICAL=15
 MSG_TRACE=10
 MSG_NOTICE=5
 MSG_INFO=1
 
+# Compatibility for older tasks
+debug_out() { message_output ${MSG_DEBUG} "$@"; }
+
+# Simple little append logger and console dumper
 message_output()
 {
   local log_level=${1}
@@ -54,57 +51,34 @@ message_output()
   local log_timestamp=`date '+%F %T'`
   if [[ -e "${script_path}/ft_config/ft_config_narration.on" ]]
   then  
-    echo "   Debug: $@" 
+    echo "   Debug(SEV:${log_level}): $2" 
   fi
   
   if [[ -e "${script_path}/ft_config/ft_config_logging.on" ]]
   then
     # Bugfix R207 - Add -e & \r to generate a carrage return for Windows' Notepad
-    echo -e "(${log_timestamp}): ${@}\r" >> ${debug_path}${debug_filename}
+    echo -e "(${log_timestamp})(SEV:${log_level}): ${2}\r" >> "${logfile_path}${logfile_date}.${logfile_filename}.log"
   fi
   
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]
   then
-    echo -e "(${log_timestamp}): ${@}\r" >> ${debug_path}${debug_filename}.trace.log
+    echo -e "(${log_timestamp})(SEV:${log_level}): ${2}\r" >> "${logfile_path}${logfile_date}.${logfile_filename}.trace.log"
   fi  
 }
 
 # Trim the logfile if it gets too big
 trim_log()
 {
-  log_size=`stat -c %s ${debug_path}log.${debug_filename}`   # Get Filesize
-  if [ "${log_size}" -gt "${debug_logfile_maxsize}" ]; # if it gets too big...
+  log_size=`stat -c %s ${logfile_path}${logfile_date}.${logfile_filename}.log`   # Get Filesize
+  if [ "${log_size}" -gt "${logfile_maxsize}" ]; # if it gets too big...
   then
     echo "   Trimming log... ( ${log_size} bytes )"
 
     # Compress the old logfile
     echo "   Compressing old log..."
-    compress_gzip_file ${debug_path}log.${debug_filename}
+    compress_gzip_file "${logfile_path}${logfile_date}.${logfile_filename}.log"
   else
     echo "   Log does not need trimming. ( ${log_size} bytes )"
-  fi
-}
-
-# Simple little append logger and console dumper
-# Logs over 100KB are automatically gzipped.
-debug_logfile_maxsize=100000
-# Path to write tracefile logs to
-debug_path="${script_path}/ft_logs/"
-# Define the logfilename backup 'generic' date format: YYYYMMDD_HHMMSS
-debug_file_date=`date +%Y%0m%0d_%0H%0M%0S`
-# This is the default log file name if a task does not redefine it.
-debug_filename="filetasker.log"
-debug_out()
-{
-  if [[ -e "${script_path}/ft_config/ft_config_narration.on" ]] 
-  then  
-    echo "   Debug: $@" 
-  fi
-  if [[ -e "${script_path}/ft_config/ft_config_logging.on" ]]
-  then
-    # Bugfix R207 - Add -e to echo to enable escapes
-    # Bugfix R207 - Add \r to generate a carrage return for Windows' Notepad
-    echo -e "("`date '+%F %T'`"): ${@}\r" >> ${debug_path}log.${debug_filename}
   fi
 }
 

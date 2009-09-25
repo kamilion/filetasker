@@ -25,8 +25,17 @@
 # Paths
 # -----------
 
-# Load Path Configuration
+# Load Global Path Configuration
 source ${script_path}/ft_config/ft_config_paths.sh
+
+# Path to write logs & tracefiles to
+logfile_path="${script_path}/ft_logs/"
+# This is the default log file name if a task does not redefine it.
+logfile_filename="ft_core.${debug_file_date}"
+# Define the logfilename backup 'generic' date format: YYYYMMDD_HHMMSS
+logfile_date=`date +%Y%0m%0d_%0H%0M%0S`
+# Logs over 100KB are automatically gzipped.
+logfile_maxsize=100000
 
 # -----------
 # End Variables
