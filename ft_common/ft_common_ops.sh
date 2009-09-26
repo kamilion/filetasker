@@ -178,7 +178,27 @@ trap_debug_task_dump()
 }
 # End Debugging functions
 
+# Checks to see if $1 exists in array named $2
+# Uses indirect variables to pass the array.
+is_in_array() {
+  local match=${1} # What text are we checking for?
+  local input="$2[*]" # Indirection trick, add array selector BEFORE indirection.
+  local ar_input=${!input} # Now we can use variable indirection on array data like "input[*]"!
+  for i in ${ar_input[@]}; do # Because ${!input[*]} means list "array keys", not "array data"!
+    if [[ ${match} == ${i} ]]; then return 0; fi; # Exists.
+  done
+  return 1; # Does not exist.
+}
 
+is_not_in_array() {
+  local match=${1} # What text are we checking for?
+  local input="$2[*]" # Indirection trick, add array selector BEFORE indirection.
+  local ar_input=${!input} # Now we can use variable indirection on array data like "input[*]"!
+  for i in ${ar_input[@]}; do # Because ${!input[*]} means list "array keys", not "array data"!
+    if [[ ${match} == ${i} ]]; then return 1; fi; # Exists.
+  done
+  return 0; # Does not exist.
+}
 
 # Start Main Routines
 # Default task_init function. Override me.
