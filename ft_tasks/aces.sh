@@ -98,7 +98,7 @@ task()
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   
-  make_line_header "ACES Working on ${1}"
+  make_line_header "ACES Working on ${dir_name}/${1}"
   
   local my_file_name=${file_name}  
   task_pre ${my_file_name}
