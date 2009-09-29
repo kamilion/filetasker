@@ -45,6 +45,9 @@ E_MISMATCH=67 # File size/mtime didn't match
 pushd() { builtin pushd "${@}" > /dev/null; }
 popd() { builtin popd "${@}" > /dev/null; }
 
+# ALIAS: Generates the directories the links will be stored in
+generate_dir() { mkdir -p ${1}; }
+
 # -----------
 # File Functions
 # -----------
@@ -364,9 +367,6 @@ gather_directories()
 }
 
 # Start Sub Routines
-
-# ALIAS: Generates the directories the links will be stored in
-generate_dir() { mkdir -p ${1}; }
 
 # How long should match sleep?
 # Inputs: ${1} seconds to sleep
