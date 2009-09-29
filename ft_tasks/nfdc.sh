@@ -19,7 +19,7 @@
 # -----------
 # 
 # CCU (Chart Change Update) date_format = yyyymmdd - 56 day cycle
-# NFDC_Sources=( apt, arb, awy, fix, ils, nav, stardp, sua )
+# NFDC_Sources=( apt arb awy fix ils nav stardp sua )
 # 
 # -----------
 # End Program Information
@@ -34,6 +34,8 @@
 # -----------
 task_subtasks=( debug link copy move )
 
+NFDC_Sources=( apt arb awy fix ils nav stardp sua )
+
 # -----------
 # Strings
 # -----------
@@ -42,7 +44,7 @@ task_name="nfdc"
 logfile_filename="${task_name}"
 
 # Look for files of type...
-file_ext=".gz"
+file_ext=".txt"
 
 # filename segments are seperated by...
 #parse_seperator="."
