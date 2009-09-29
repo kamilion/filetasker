@@ -70,31 +70,6 @@ target_path="${target_base_path}"
 # End Variables
 # -----------
 
-#Main Transformation Worker Function
-transform_operations_pre () { :; }
-transform_operations_post () { :; }
-#Input: $1: Filename
-transform_operations()
-{
-  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
-  local my_file_name=${1}
-  transform_operations_pre ${my_file_name}
-  
-  # Add more array translations here.
-  #local my_file_source=${ar_path_name[5]}
-  local my_file_date=${ar_file_name[3]}
-
-  # TODO: filter in the source, format, and date from the directory. - DONE
-  #ar_file_name[0]="D10_DFW"
-  ar_file_name=( "tracon" "D10_DFW" "adar_capture" "${my_file_date}" )
-
-  
-  # build the filename from ar_file_name
-  build_filename 
-  transform_operations_post ${new_file_name}
-}
-
 # -----------
 # Main Task
 # -----------
@@ -125,9 +100,11 @@ task()
   
   local my_file_name=${file_name}
   task_pre ${my_file_name}
-
-  # Filename transformation
-  transform_operations ${my_file_name}
+  local my_file_date=${ar_file_name[3]}
+  
+  ar_file_name=( "tracon" "D10_DFW" "adar_capture" "${my_file_date}" )
+  # build the filename from ar_file_name
+  build_filename
 
   task_post
   # End of Task

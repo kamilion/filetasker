@@ -111,7 +111,7 @@ task()
 
   ar_file_name=( "nfdc" "${my_file_name%$file_ext}" "CCU_${nfdc_date}" )
   # build the filename from ar_file_name
-  build_filename 
+  build_filename
 
   task_post
   # End of Task

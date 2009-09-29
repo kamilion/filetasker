@@ -76,23 +76,6 @@ parse_to_epoch_from_date_ciws()
   message_output ${MSG_INFO} " Parsed Filedate: ${file_datestamp} - Date: ${file_datestamp:0:4}-${file_datestamp:4:2}-${file_datestamp:6:2} Time: ${file_datestamp:9:2}:${file_datestamp:11:2}:${file_datestamp:13:2} Zulu - Epoch: @${file_epoch} or ${file_timestamp}"
 }
 
-#Main Transformation Worker Function
-transform_operations_pre () { :; }
-transform_operations_post () { :; }
-#Input: $1: Filename
-transform_operations()
-{
-  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
-  local my_file_name=${1}
-  transform_operations_pre ${my_file_name}
-  # Remove the first four filename indexes (edu, mit, ll, and wx)
-  ar_file_name=("${ar_file_name[@]:4}")
-  # Build the filename from ar_file_name
-  build_filename 
-  transform_operations_post ${new_file_name}
-}
-
 # -----------
 # Main Task
 # -----------
@@ -118,7 +101,11 @@ task()
   local my_file_name=${file_name}
   task_pre ${my_file_name}
 
-  transform_operations ${my_file_name}
+  # Remove the first four filename indexes (edu, mit, ll, and wx)
+  ar_file_name=("${ar_file_name[@]:4}")
+
+  # Build the filename from ar_file_name
+  build_filename
 
   task_post
   # End of Task

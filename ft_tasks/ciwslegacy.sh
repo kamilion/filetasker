@@ -59,25 +59,6 @@ target_path="${target_base_path}"
 # End Variables
 # -----------
 
-#Main Transformation Worker Function
-transform_operations_pre () { :; }
-transform_operations_post () { :; }
-#Input: $1: Filename
-transform_operations()
-{
-  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
-  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
-  local my_file_name=${1}
-  transform_operations_pre ${my_file_name}
-  # Add the prefix to index 0
-  ar_file_name[0]="${file_name_prefix}${ar_file_name[0]}"
-  # Change GMT to UTC
-  ar_file_name[5]="${ar_file_name[5]/GMT/UTC}"
-  # build the filename from ar_file_name
-  build_filename 
-  transform_operations_post ${new_file_name}
-}
-
 # -----------
 # Main Task
 # -----------
@@ -104,8 +85,14 @@ task()
   local my_file_name=${file_name}
   task_pre ${my_file_name}
 
-  # Filename transformation
-  transform_operations ${my_file_name}
+  # Add the prefix to index 0
+  ar_file_name[0]="${file_name_prefix}${ar_file_name[0]}"
+
+  # Change GMT to UTC
+  ar_file_name[5]="${ar_file_name[5]/GMT/UTC}"
+
+  # build the filename from ar_file_name
+  build_filename
 
   task_post
   # End of Task
