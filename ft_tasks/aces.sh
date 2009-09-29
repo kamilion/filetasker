@@ -44,14 +44,14 @@ task_name="aces"
 logfile_filename="${task_name}"
 
 # Look for files of type...
-file_ext=".gz"
+file_ext="aces.dat"
 
 # filename segments are seperated by...
 #parse_seperator="."
 # Defaults to "."
 
 # For tasks with files in multiple directories.
-#ft_multidir=1
+ft_multidir=1
 
 # Turn on output compression for this task
 ft_output_compression="gzip"
@@ -100,16 +100,11 @@ task()
   
   make_line_header "ACES Working on ${1}"
   
-  if is_not_in_array "${file_name%$file_ext}" "NFDC_Sources"; then
-    message_output ${MSG_NOTICE} "Skipped ${1}, Not a requested Source File";
-    return 0; # Bail out
-  fi
-
   local my_file_name=${file_name}  
   task_pre ${my_file_name}
   local my_file_date=${dir_name}
 
-  ar_file_name=( "aces" "${my_file_name%$file_ext}" "CCU_${nfdc_date}" )
+  ar_file_name=( "aces" "${dir_name%"/"}" "CCU_${aces_date}" )
   # build the filename from ar_file_name
   build_filename
 
