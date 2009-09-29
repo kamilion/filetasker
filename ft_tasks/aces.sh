@@ -19,7 +19,7 @@
 # -----------
 # 
 # CCU (Chart Change Update) date_format = yyyymmdd - 56 day cycle
-# ACES_Sources=( ZAB, ZAU, ZBW, ZDC, ZDV, ZFW, ZHU, ZID, ZJX, ZKC, ZLA, ZLC, ZMA, ZME, ZMP, ZNY, ZOA, ZOB, ZSE, ZTL )
+# ACES_Sources=( ZAB ZAU ZBW ZDC ZDV ZFW ZHU ZID ZJX ZKC ZLA ZLC ZMA ZME ZMP ZNY ZOA ZOB ZSE ZTL )
 # 
 # -----------
 # End Program Information
@@ -33,6 +33,8 @@
 # Arrays
 # -----------
 task_subtasks=( debug link copy move )
+
+ACES_Sources=( ZAB ZAU ZBW ZDC ZDV ZFW ZHU ZID ZJX ZKC ZLA ZLC ZMA ZME ZMP ZNY ZOA ZOB ZSE ZTL )
 
 # -----------
 # Strings
