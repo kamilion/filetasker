@@ -12,6 +12,11 @@
 # -----------
 # Variable Defaults
 # -----------
+if [[ `uname` == 'SunOS' ]]; then
+  source ${script_path}/ft_config/ft_config_defaults_solaris.sh
+elif [[ `uname` == 'Linux' ]]
+  source ${script_path}/ft_config/ft_config_defaults_linux.sh
+fi
 
 # -----------
 # Arrays
