@@ -14,7 +14,7 @@
 # -----------
 if [[ `uname` == 'SunOS' ]]; then
   source ${script_path}/ft_config/ft_config_defaults_solaris.sh
-elif [[ `uname` == 'Linux' ]]
+elif [[ `uname` == 'Linux' ]]; then
   source ${script_path}/ft_config/ft_config_defaults_linux.sh
 fi
 
