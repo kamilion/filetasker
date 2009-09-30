@@ -44,7 +44,7 @@ file_ext="asdi_xml"
 # Defaults to "."
 
 # For tasks with files in multiple directories.
-ft_multidir=1
+#ft_multidir=1
 
 # -----------
 # Paths
