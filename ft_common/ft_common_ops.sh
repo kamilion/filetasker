@@ -110,7 +110,10 @@ trim_log()
 
 make_line_header()
 {
-  eval printf -v spacerline "%.s=" {1..${#1}}
+  local spacerline="";
+  for each in {1..${#1}}; do
+    spacerline="${spacerline}="; done;
+  #eval printf -v spacerline "%.s=" {1..${#1}} # Solaris doesn't do -v
   message_output ${MSG_INFO} "=======${spacerline}======="
   message_output ${MSG_INFO} "====== ${1} ======"
   message_output ${MSG_INFO} "=======${spacerline}======="
