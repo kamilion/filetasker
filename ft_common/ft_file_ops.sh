@@ -564,7 +564,7 @@ update_linklist_paths()
 # -----------
 
 # Output Loader information
-if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+if [[ -e "${script_path}/ft_config/ft_config_loud.on" ]]; then
   echo "  FileTasker File Operations Module ${ftask_version} Loaded at ${SECONDS} seconds."; fi
 # -----------
 # End Main Program
