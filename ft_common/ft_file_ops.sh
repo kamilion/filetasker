@@ -19,6 +19,7 @@
 
 E_MISSINGFILE=66 # Couldn't find a file
 E_MISMATCH=67 # File size/mtime didn't match
+E_FILEEXISTS=68 # A real file exists, should not link.
 
 # -----------
 # Arrays
@@ -60,7 +61,9 @@ tar_file ()
   tar_file_pre ${1}
   echo "    Tarring" ${1}
   tar ${tar_flags:='-cvf'} ${1}
+  local returnval=$?
   tar_file_post ${1}
+  return $returnval;
 }
 
 # Hooks for pre and post operations
@@ -71,7 +74,9 @@ untar_file ()
   untar_file_pre ${1}
   echo "    Untarring" ${1}
   tar ${untar_flags:='-xvf'} ${1}
+  local returnval=$?
   untar_file_post ${1}
+  return $returnval;
 }
 
 # Hooks for pre and post operations
@@ -82,7 +87,9 @@ compress_gzip_file ()
   compress_gzip_file_pre ${1}
   echo "    Compressing" ${1}
   gzip ${compress_flags:='-9f'} ${1}
+  local returnval=$?
   compress_gzip_file_post ${1}
+  return $returnval;
 }
 
 # Hooks for pre and post operations
@@ -93,7 +100,9 @@ decompress_gzip_file ()
   decompress_gzip_file_pre ${1}
   echo "    Decompressing" ${1}
   gzip ${decompress_flags:='-vd'} ${1}
+  local returnval=$?
   decompress_gzip_file_post ${1}
+  return $returnval;
 }
 
 # Hooks for pre and post operations
@@ -102,6 +111,7 @@ move_file_post () { :; }
 move_file()
 {
   move_file_pre ${1} ${2}
+  local returnval=$?
   echo -e "    Moving" ${1} "\n    to" ${2}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
@@ -110,18 +120,22 @@ move_file()
       message_output ${MSG_STATUS} "  Target link already exists. Overwriting Link with File."
       rm ${2}
       mv ${move_flags:='-f'} ${1} ${2}
+      returnval=$?
     else
       # It's not a link. Clobber/Move over it.
       message_output ${MSG_STATUS} "  Target file already exists. Moving file with Overwrite."
       rm ${2}
       mv ${move_flags:='-f'} ${1} ${2}
+      returnval=$?
     fi
   else
     # No existing file. Make one.
     message_output ${MSG_STATUS} "  Target does not exist. Creating file."
     mv ${move_flags:='-f'} ${1} ${2}
+    returnval=$?
   fi
   move_file_post ${1} ${2}
+  return $returnval;
 }
 
 # Hooks for pre and post operations
@@ -130,6 +144,7 @@ copy_file_post () { :; }
 copy_file()
 {
   copy_file_pre ${1} ${2}
+  local returnval=$?
   echo -e "    Copying" ${1} "\n    to" ${2}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
@@ -138,17 +153,20 @@ copy_file()
       message_output ${MSG_STATUS} "  Target link already exists. Overwriting."
       rm ${2}
       cp ${copy_flags:="-f"} ${1} ${2}
+      returnval=$?
     else
       # It's not a link. Don't clobber existing files during copy.
       message_output ${MSG_STATUS} "  Target file already exists. Keeping existing."
-      return;
+      return $E_FILEEXISTS;
     fi
   else
     # No existing file. Make one.
     message_output ${MSG_STATUS} "  Target does not exist. Creating file."
     cp ${copy_flags:='-f'} ${1} ${2}
+    returnval=$?
   fi
   copy_file_post ${1} ${2}
+  return $returnval;
 }
 
 # Hooks for pre and post operations
@@ -157,6 +175,7 @@ link_file_post () { :; }
 link_file()
 {
   link_file_pre ${1} ${2}
+  local returnval=$?
   echo -e "    Linking" ${1} "\n    to" ${2}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
@@ -164,17 +183,20 @@ link_file()
       # It's a link. Clobber/update it.
       message_output ${MSG_STATUS} "  Target link already exists. Overwriting link."
       ln  ${link_flags:='-sf'} ${1} ${2}
+      returnval=$?
     else
       # It's not a link. Don't clobber it.
       message_output ${MSG_STATUS} "  Target file already exists. Keeping existing."
-      return;
+      return $E_FILEEXISTS;
     fi
   else
     # No existing link. Make one.
     message_output ${MSG_STATUS} "  Target does not exist. Creating link."
     ln  ${link_flags:='-sf'} ${1} ${2}
+    returnval=$?
   fi
   link_file_post ${1} ${2}
+  return $returnval;
 }
 
 # Hooks for pre and post operations
@@ -193,6 +215,7 @@ debug_file()
   message_output ${MSG_INFO} "  New Filename: `basename ${2}`"
   echo "    New Filename: `basename ${2}`"
   debug_file_post ${1} ${2}
+  return 0;
 }
 
 perform_fileop_post() { :; }
@@ -207,19 +230,24 @@ perform_fileop()
   check_and_create_target_dirs
   # Perform the selected file operation
   message_output ${MSG_INFO} " Performing subtask: ${1}"
+  local returnval=$?
   case "${1}" in
   "link" )
     link_file ${source_path}${2} ${target_path}${3}
+    returnval=$?
   ;;
   "copy" )
     copy_file ${source_path}${2} ${target_path}${3}
+    returnval=$?
   ;;
   "move" )
     move_file ${source_path}${2} ${target_path}${3}
+    returnval=$?
   ;;
   * )
     # Undefined fileop, just debug.
     debug_file ${source_path}${2} ${target_path}${3}
+    returnval=$?
   ;;
   esac
   # Post operation work
@@ -234,6 +262,12 @@ perform_fileop()
       perform_fileop_post ${3}; # Compression is off, filename did not change.
       update_linklist ${3}; # Disabling compression bypasses the linklist hook there.
   fi
+  if [[ $returnval -eq "0" ]]; then
+    echo "    File Operation Successful ($returnval)"
+  else
+    echo "    File Operation Failed ($returnval)."
+  fi
+  return $returnval;
 }
 
 # Pathname Parser
