@@ -119,15 +119,19 @@ trim_log()
   fi
 }
 
+extend_line() { # Meant to be called via backticks.
+  local numchars=${1}; local spacerline=""; # Set variables
+  while [ $numchars -gt "0" ]; do
+    spacerline="${spacerline}="; # Append one more spacer
+    ((numchars--)); done; # Decrease the counter
+  echo $spacerline; # Output the final line
+}
+
 make_line_header()
 {
-  local spacerline="";
-  for each in {1..${#1}}; do
-    spacerline="${spacerline}="; done;
-  #eval printf -v spacerline "%.s=" {1..${#1}} # Solaris doesn't do -v
-  message_output ${MSG_INFO} "=======${spacerline}======="
+  message_output ${MSG_INFO} "======="`extend_line ${#1}`"======="
   message_output ${MSG_INFO} "====== ${1} ======"
-  message_output ${MSG_INFO} "=======${spacerline}======="
+  message_output ${MSG_INFO} "======="`extend_line ${#1}`"======="
 }
 
 # Signal Traps
@@ -307,7 +311,7 @@ task() { :; }
 # -----------
 
 # Load Logging Operation Functions First
-source ${script_path}/ft_common/ft_logging_ops.sh
+#source ${script_path}/ft_common/ft_logging_ops.sh
 
 # Load File Operation Functions
 source ${script_path}/ft_common/ft_file_ops.sh
