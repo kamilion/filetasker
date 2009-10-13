@@ -158,6 +158,8 @@ debug_dump_output=N
 trap_bail_out()
 {
   message_output ${MSG_CRITICAL} "  Trapped Signal ${1} (${2}), bailing out..."
+  message_output ${MSG_CRITICAL} "  Trapped Current File Name:" ${file_name}
+  message_output ${MSG_CRITICAL} "  Trapped Call Stack:" ${FUNCNAME[@]}
   echo "  Trapped Signal ${1} (${2}), bailing out..."
   debug_dump_output=Y
   quit_filetasker
@@ -185,6 +187,7 @@ trap_exit_dump()
     echo "           FT_Args:" ${ft_args[*]}
     echo "         Task Name:" ${task_name}
     echo "      Subtask Name:" ${subtask_name}
+    echo " Current File Name:" ${file_name}
     trap_debug_task_dump
   fi
 }
