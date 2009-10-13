@@ -59,7 +59,7 @@ tar_file_post () { :; }
 tar_file ()
 {
   tar_file_pre ${1}
-  echo "    Tarring" ${1}
+  message_output ${MSG_CONSOLE} "  Tarring" ${1}
   tar ${tar_flags:='-cvf'} ${1}
   local returnval=$?
   tar_file_post ${1}
@@ -72,8 +72,7 @@ untar_file_post () { :; }
 untar_file ()
 {
   untar_file_pre ${1}
-  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-  echo "    Untarring" ${1}; fi
+  message_output ${MSG_CONSOLE} "  Untarring" ${1}
   tar ${untar_flags:='-xvf'} ${1}
   local returnval=$?
   untar_file_post ${1}
@@ -86,8 +85,7 @@ compress_gzip_file_post () { :; }
 compress_gzip_file ()
 {
   compress_gzip_file_pre ${1}
-  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-  echo "    Compressing" ${1}; fi
+  message_output ${MSG_CONSOLE} "  Compressing" ${1}
   gzip ${compress_flags:='-9f'} ${1}
   local returnval=$?
   compress_gzip_file_post ${1}
@@ -100,8 +98,7 @@ decompress_gzip_file_post () { :; }
 decompress_gzip_file ()
 {
   decompress_gzip_file_pre ${1}
-  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-  echo "    Decompressing" ${1}; fi
+  message_output ${MSG_CONSOLE} "  Decompressing" ${1}
   gzip ${decompress_flags:='-vd'} ${1}
   local returnval=$?
   decompress_gzip_file_post ${1}
@@ -115,8 +112,8 @@ move_file()
 {
   move_file_pre ${1} ${2}
   local returnval=$?
-  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-  echo -e "    Moving" ${1} "\n    to" ${2}; fi
+  message_output ${MSG_CONSOLE} "  Moving" ${1}
+  message_output ${MSG_CONSOLE} "  to" ${2}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -149,8 +146,8 @@ copy_file()
 {
   copy_file_pre ${1} ${2}
   local returnval=$?
-  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-  echo -e "    Copying" ${1} "\n    to" ${2}; fi
+  message_output ${MSG_CONSOLE} "  Copying" ${1}
+  message_output ${MSG_CONSOLE} "  to" ${2}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -181,8 +178,8 @@ link_file()
 {
   link_file_pre ${1} ${2}
   local returnval=$?
-  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-  echo -e "    Linking" ${1} "\n    to" ${2}; fi
+  message_output ${MSG_CONSOLE} "  Linking" ${1}
+  message_output ${MSG_CONSOLE} "  to" ${2}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -269,12 +266,8 @@ perform_fileop()
       update_linklist ${3}; # Disabling compression bypasses the linklist hook there.
   fi
   if [[ $returnval -eq "0" ]]; then
-    if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-      echo "    File Operation Successful ($returnval) for ${3}"; fi
     message_output ${MSG_STATUS} " File Operation Successful (${returnval}) for ${3}"
   else
-    if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-      echo "    File Operation Failed ($returnval) for ${3}"; fi
     message_output ${MSG_ERROR} " File Operation Failed (${returnval}) for ${3}"
   fi
   return $returnval;
