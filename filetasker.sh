@@ -1,7 +1,7 @@
 #!/bin/bash
 # -----------
 # FileTasker Script
-ftask_version="V0.7r9"
+ftask_version="V0.7r10"
 # Output Initial Greeting
 echo ""
 echo " FileTasker ${ftask_version}"
@@ -114,7 +114,7 @@ if [[ "${#}" -lt "${MIN_NUM_ARGS}" ]]
       else
         # Load SubTask
         select_subtask ${subtask_name}
-        echo "   Passed parameters to subtask: ${subtask_args[@]}"
+        echo "   Parameters for ${selected_subtask} subtask: ${subtask_args[@]}"
     fi    
 fi
 

@@ -72,7 +72,8 @@ untar_file_post () { :; }
 untar_file ()
 {
   untar_file_pre ${1}
-  echo "    Untarring" ${1}
+  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+  echo "    Untarring" ${1}; fi
   tar ${untar_flags:='-xvf'} ${1}
   local returnval=$?
   untar_file_post ${1}
@@ -85,7 +86,8 @@ compress_gzip_file_post () { :; }
 compress_gzip_file ()
 {
   compress_gzip_file_pre ${1}
-  echo "    Compressing" ${1}
+  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+  echo "    Compressing" ${1}; fi
   gzip ${compress_flags:='-9f'} ${1}
   local returnval=$?
   compress_gzip_file_post ${1}
@@ -98,7 +100,8 @@ decompress_gzip_file_post () { :; }
 decompress_gzip_file ()
 {
   decompress_gzip_file_pre ${1}
-  echo "    Decompressing" ${1}
+  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+  echo "    Decompressing" ${1}; fi
   gzip ${decompress_flags:='-vd'} ${1}
   local returnval=$?
   decompress_gzip_file_post ${1}
@@ -112,7 +115,8 @@ move_file()
 {
   move_file_pre ${1} ${2}
   local returnval=$?
-  echo -e "    Moving" ${1} "\n    to" ${2}
+  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+  echo -e "    Moving" ${1} "\n    to" ${2}; fi
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -145,7 +149,8 @@ copy_file()
 {
   copy_file_pre ${1} ${2}
   local returnval=$?
-  echo -e "    Copying" ${1} "\n    to" ${2}
+  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+  echo -e "    Copying" ${1} "\n    to" ${2}; fi
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -176,7 +181,8 @@ link_file()
 {
   link_file_pre ${1} ${2}
   local returnval=$?
-  echo -e "    Linking" ${1} "\n    to" ${2}
+  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+  echo -e "    Linking" ${1} "\n    to" ${2}; fi
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -263,9 +269,13 @@ perform_fileop()
       update_linklist ${3}; # Disabling compression bypasses the linklist hook there.
   fi
   if [[ $returnval -eq "0" ]]; then
-    echo "    File Operation Successful ($returnval)"
+    if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+      echo "    File Operation Successful ($returnval) for ${3}"; fi
+    message_output ${MSG_STATUS} " File Operation Successful (${returnval}) for ${3}"
   else
-    echo "    File Operation Failed ($returnval)."
+    if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+      echo "    File Operation Failed ($returnval) for ${3}"; fi
+    message_output ${MSG_ERROR} " File Operation Failed (${returnval}) for ${3}"
   fi
   return $returnval;
 }
@@ -341,7 +351,7 @@ iterate_files()
         task ${file_name}
       fi
     done
-  echo  "   Completed operations on ${#filenames[@]} ${file_ext} files"
+  echo  "   Completed operations on ${#filenames[@]} ${file_ext} files in ${SECONDS} seconds."
 }
 
 iterate_directories()
@@ -349,7 +359,8 @@ iterate_directories()
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   if [[ ${ft_multidir} ]]; then
-    echo "    Searching Multiple Source Directories."
+    if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+      echo "    Searching Multiple Source Directories."; fi
     gather_directories
     # DIRSTACK starts out with a useless entry to ".", we'll just stop at 1.
     # Otherwise this would read: for dir_name in ${DIRSTACK[@]}
@@ -363,7 +374,8 @@ iterate_directories()
       done
     return 0; # Success
   else
-    echo "    Searching Single Source Directory."
+    if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+      echo "    Searching Single Source Directory."; fi
     iterate_files
     return 0; # Success
   fi
@@ -561,7 +573,8 @@ update_linklist_paths()
 # -----------
 
 # Output Loader information
-echo "  FileTasker File Operations Module ${ftask_version} Loaded at ${SECONDS} seconds."
+if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+  echo "  FileTasker File Operations Module ${ftask_version} Loaded at ${SECONDS} seconds."; fi
 # -----------
 # End Main Program
 # -----------

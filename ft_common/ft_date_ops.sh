@@ -143,7 +143,8 @@ check_and_create_target_dirs()
 # -----------
 
 # Output Loader information
-echo "  FileTasker Date Operations Module ${ftask_version} Loaded at ${SECONDS} seconds."
+if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+  echo "  FileTasker Date Operations Module ${ftask_version} Loaded at ${SECONDS} seconds."; fi
 # -----------
 # End Main Program
 # -----------

@@ -98,13 +98,16 @@ trim_log()
   log_size=`stat -c %s ${logfile_path}${logfile_date}.${logfile_filename}.log`   # Get Filesize
   if [ "${log_size}" -gt "${logfile_maxsize}" ]; # if it gets too big...
   then
-    echo "   Trimming log... ( ${log_size} bytes )"
+    if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+      echo "   Trimming log... ( ${log_size} bytes )"; fi
 
     # Compress the old logfile
-    echo "   Compressing old log..."
+    if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+      echo "   Compressing old log..."; fi
     compress_gzip_file "${logfile_path}${logfile_date}.${logfile_filename}.log"
   else
-    echo "   Log does not need trimming. ( ${log_size} bytes )"
+    if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+      echo "   Log does not need trimming. ( ${log_size} bytes )"; fi
   fi
 }
 
@@ -208,7 +211,8 @@ is_not_in_array() {
 task_init_hook() { :; }
 task_init()
 {
-  echo "  Loaded taskfile ${task_name} at ${SECONDS} seconds."
+  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+    echo "  Loaded taskfile ${task_name} at ${SECONDS} seconds."; fi
   task_init_hook
 }
 
@@ -232,7 +236,6 @@ select_subtask()
     selected_subtask="debug"
   ;;
   esac
-  echo "   Selected subtask is: ${selected_subtask}"
 }
 
 # Loads a taskfile
@@ -257,7 +260,8 @@ load_task()
 # Change directories to File Source Path
 start_filetasker()
 {
-  echo "  Traversing to Source Directory at ${SECONDS} seconds..."
+  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+    echo "  Traversing to Source Directory at ${SECONDS} seconds..."; fi
   # Is the source path a directory?
   if [ -d ${source_path} ]
   then
@@ -275,14 +279,17 @@ start_filetasker()
 quit_filetasker()
 {
   # Head Home
-  echo "  Traversing back to Script Directory..."
+  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+    echo "  Traversing back to Script Directory..."; fi
   cd ${script_path}
   # Log too big?
-  echo "  Trimming log (If needed)..."
+  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+    echo "  Trimming log (If needed)..."; fi
   # Close the log, show our times, then trim the log (Prevents leaving a one-line log after gz)
   message_output ${MSG_STATUS} "LOG SECTION END -- Script took ${SECONDS} seconds to complete all operations."
   trim_log
-  echo " Script took ${SECONDS} seconds to execute."
+  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+    echo " Script took ${SECONDS} seconds to execute."; fi
   echo ""
 }
 
@@ -320,7 +327,8 @@ source ${script_path}/ft_common/ft_date_ops.sh
 # -----------
 
 # Output Loader information
-echo "  FileTasker Common Operations Module ${ftask_version} Loaded at ${SECONDS} seconds."
+if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
+  echo "  FileTasker Common Operations Module ${ftask_version} Loaded at ${SECONDS} seconds."; fi
 # -----------
 # End Main Program
 # -----------
