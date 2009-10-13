@@ -40,6 +40,7 @@ MSG_TRACE=20
 MSG_NOTICE=10
 MSG_STATUS=7
 MSG_INFO=5
+MSG_CONSOLE=3
 MSG_CRITICAL=2
 MSG_ERROR=1
 
@@ -50,6 +51,9 @@ sev_name() { # Meant to be called via backticks.
   ;;
   "2" )
     echo "CRITICAL"
+  ;;
+  "3" )
+    echo " CONSOLE"
   ;;
   "5" )
     echo "    INFO"
@@ -76,14 +80,21 @@ message_output()
   shift 1
   local log_message=${@}
   local log_timestamp=`date '+%F %T'`
-  if [[ -e "${script_path}/ft_config/ft_config_narration.on" ]]; then
-    if [[ "${log_level}" -le "${MSG_NOTICE}" ]]; then # Narrate events
+  # Check for Low severity events.
+  if [[ "${log_level}" -le "${MSG_NOTICE}" ]]; then # Check for low severity events
+    if [[ -e "${script_path}/ft_config/ft_config_narration.on" ]]; then # Narration is on.
       echo "   Narration (SEV:`sev_name ${log_level}`): ${log_message}";
+    else # Narration is off.
+      if [[ -e "${script_path}/ft_config/ft_config_loud.on" ]]; then # Console chatter enabled?
+        if [[ "${log_level}" -eq "${MSG_CONSOLE}" ]]; then # We only want messages marked CONSOLE.
+          echo "  ${log_message}"; # Console messages go to the terminal.
+        fi
+      fi
     fi
   fi
   # Bugfix R207 - Add -e & \r to generate a carrage return for Windows' Notepad
-  if [[ -e "${script_path}/ft_config/ft_config_logging.on" ]]; then # Check if tracing is on.
-    if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then # Write *everything* to the tracelog.
+  if [[ -e "${script_path}/ft_config/ft_config_logging.on" ]]; then # First check if logging is on.
+    if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then # Then write *everything* to the tracelog.
       echo -e "(${log_timestamp})(SEV:`sev_name ${log_level}`): ${log_message}\r" >> "${logfile_path}${logfile_date}.${logfile_filename}.trace.log";
     fi
     if [[ "${log_level}" -le "${MSG_NOTICE}" ]]; then # Write low severity events only to the normal log.
@@ -98,16 +109,13 @@ trim_log()
   log_size=`stat -c %s ${logfile_path}${logfile_date}.${logfile_filename}.log`   # Get Filesize
   if [ "${log_size}" -gt "${logfile_maxsize}" ]; # if it gets too big...
   then
-    if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-      echo "   Trimming log... ( ${log_size} bytes )"; fi
+    message_output ${MSG_CONSOLE} " Trimming log... ( ${log_size} bytes )"
 
     # Compress the old logfile
-    if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-      echo "   Compressing old log..."; fi
+    message_output ${MSG_CONSOLE} " Compressing old log...";
     compress_gzip_file "${logfile_path}${logfile_date}.${logfile_filename}.log"
   else
-    if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-      echo "   Log does not need trimming. ( ${log_size} bytes )"; fi
+    message_output ${MSG_CONSOLE} " Log does not need trimming. ( ${log_size} bytes )"
   fi
 }
 
@@ -211,8 +219,7 @@ is_not_in_array() {
 task_init_hook() { :; }
 task_init()
 {
-  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-    echo "  Loaded taskfile ${task_name} at ${SECONDS} seconds."; fi
+  message_output ${MSG_CONSOLE} "Loaded taskfile ${task_name} at ${SECONDS} seconds."
   task_init_hook
 }
 
@@ -260,8 +267,7 @@ load_task()
 # Change directories to File Source Path
 start_filetasker()
 {
-  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-    echo "  Traversing to Source Directory at ${SECONDS} seconds..."; fi
+  message_output ${MSG_CONSOLE} "Traversing to Source Directory at ${SECONDS} seconds..."
   # Is the source path a directory?
   if [ -d ${source_path} ]
   then
@@ -269,27 +275,23 @@ start_filetasker()
     cd ${source_path}
   else
     # Wasn't a directory.
-    echo "FATAL: Cannot find Taskfile's Source Directory ${source_path}"
+    message_output ${MSG_CONSOLE} "FATAL: Cannot find Taskfile's Source Directory ${source_path}"
     exit ${E_MISSINGFILE}; # Throw an error
   fi
-  echo "  Searching Source directory ${PWD}/ for ${file_ext} files"
+  message_output ${MSG_CONSOLE} "Searching Source directory ${PWD}/ for ${file_ext} files"
 }
 
 # Change directories back to the previous working directory
 quit_filetasker()
 {
   # Head Home
-  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-    echo "  Traversing back to Script Directory..."; fi
+  message_output ${MSG_CONSOLE} "Traversing back to Script Directory..."
   cd ${script_path}
   # Log too big?
-  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-    echo "  Trimming log (If needed)..."; fi
+  message_output ${MSG_CONSOLE} "Trimming log (If needed)...";
   # Close the log, show our times, then trim the log (Prevents leaving a one-line log after gz)
   message_output ${MSG_STATUS} "LOG SECTION END -- Script took ${SECONDS} seconds to complete all operations."
   trim_log
-  if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-    echo " Script took ${SECONDS} seconds to execute."; fi
   echo ""
 }
 

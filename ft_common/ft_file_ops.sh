@@ -338,7 +338,7 @@ iterate_files()
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   # Gather filenames into array
   filenames=( `ls -1t | grep "${file_ext}" | tr '\n' ' '` )
-  echo  "   Found ${#filenames[@]} ${file_ext} files in ${PWD}/"
+  message_output ${MSG_CONSOLE} " Found ${#filenames[@]} ${file_ext} files in ${PWD}/"
 
   # Iterate over filenames array
   for file_name in ${filenames[@]}
@@ -351,7 +351,7 @@ iterate_files()
         task ${file_name}
       fi
     done
-  echo  "   Completed operations on ${#filenames[@]} ${file_ext} files in ${SECONDS} seconds."
+  message_output ${MSG_CONSOLE} " Completed operations on ${#filenames[@]} ${file_ext} files in ${SECONDS} seconds."
 }
 
 iterate_directories()
@@ -359,8 +359,7 @@ iterate_directories()
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   if [[ ${ft_multidir} ]]; then
-    if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-      echo "    Searching Multiple Source Directories."; fi
+    message_output ${MSG_CONSOLE} "  Searching Multiple Source Directories."
     gather_directories
     # DIRSTACK starts out with a useless entry to ".", we'll just stop at 1.
     # Otherwise this would read: for dir_name in ${DIRSTACK[@]}
@@ -369,13 +368,12 @@ iterate_directories()
         message_output ${MSG_INFO} "Directory Stack Contents (${#DIRSTACK[@]}): ${DIRSTACK[@]}."
         popd
         dir_name=`basename ${PWD}/`
-        echo "    Traversed to ${dir_name}"
+        message_output ${MSG_CONSOLE} "  Traversed to ${dir_name}"
         iterate_files
       done
     return 0; # Success
   else
-    if [[ -e "${script_path}/ft_config/ft_config_quiet.off" ]]; then
-      echo "    Searching Single Source Directory."; fi
+    message_output ${MSG_CONSOLE} "  Searching Single Source Directory."
     iterate_files
     return 0; # Success
   fi
@@ -391,7 +389,7 @@ gather_directories()
   IFS=${OLDIFS}  # Restore IFS
   # Gather filenames into array
   local directory_names=( ${dirsource} )
-  echo  "    Found ${#directory_names[@]} directories total."
+  message_output ${MSG_CONSOLE} "  Found ${#directory_names[@]} directories total."
 
   # Clear the directory stack once
   dirs -c
@@ -409,7 +407,7 @@ gather_directories()
         pushd -n `readlink -f ${directory_name}`
       fi
     done
-  echo  "   Completed discovery in ${#directory_names[@]} directories: ${directory_names[@]}"
+  message_output ${MSG_CONSOLE} " Completed discovery in ${#directory_names[@]} directories: ${directory_names[@]}"
 }
 
 # Start Sub Routines
