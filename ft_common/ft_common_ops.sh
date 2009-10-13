@@ -107,7 +107,7 @@ message_output()
 trim_log()
 {
   log_size=`stat -c %s ${logfile_path}${logfile_date}.${logfile_filename}.log`   # Get Filesize
-  if [ "${log_size}" -gt "${logfile_maxsize}" ]; # if it gets too big...
+  if [[ "${log_size}" -gt "${logfile_maxsize}" ]]; # if it gets too big...
   then
     message_output ${MSG_CONSOLE} " Trimming log... ( ${log_size} bytes )"
 
@@ -121,7 +121,7 @@ trim_log()
 
 extend_line() { # Meant to be called via backticks.
   local numchars=${1}; local spacerline=""; # Set variables
-  while [ $numchars -gt "0" ]; do
+  while [[ $numchars -gt "0" ]]; do
     spacerline="${spacerline}="; # Append one more spacer
     ((numchars--)); done; # Decrease the counter
   echo $spacerline; # Output the final line
@@ -175,7 +175,7 @@ trap_debug_dump()
 
 trap_exit_dump()
 {
-  if [ ${debug_dump_output} == "Y" ]
+  if [[ ${debug_dump_output} == "Y" ]]
   then
     echo "Debug Dump in progress..."
     echo "dump_debug_message:" ${FUNCNAME[@]}
@@ -259,7 +259,7 @@ load_task()
   task_file="${script_path}/ft_tasks/${1}.sh"
   echo "   Loading Task: ${task_file}"
   # Does the taskfile exist?
-  if [ -f "${task_file}" ]
+  if [[ -f "${task_file}" ]]
   then
     # The task file exists! Source the file.
     source ${task_file}
@@ -276,7 +276,7 @@ start_filetasker()
 {
   message_output ${MSG_CONSOLE} "Traversing to Source Directory at ${SECONDS} seconds..."
   # Is the source path a directory?
-  if [ -d ${source_path} ]
+  if [[ -d ${source_path} ]]
   then
     # Yes, it's a directory, descend into it.
     cd ${source_path}
