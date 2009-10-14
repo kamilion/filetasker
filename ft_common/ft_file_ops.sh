@@ -208,15 +208,11 @@ debug_file_post () { :; }
 debug_file()
 {
   debug_file_pre ${1} ${2}
-  echo "    -------------"
-  message_output ${MSG_INFO} "  Old Filepath: ${source_path}"  
-  echo "    Old Filepath: ${source_path}"  
-  message_output ${MSG_INFO} "  Old Filename: `basename ${1}`"
-  echo "    Old Filename: `basename ${1}`"
-  message_output ${MSG_INFO} "  New Filepath: ${target_path}"
-  echo "    New Filepath: ${target_path}"
-  message_output ${MSG_INFO} "  New Filename: `basename ${2}`"
-  echo "    New Filename: `basename ${2}`"
+  message_output ${MSG_CONSOLE} "  -------------"
+  message_output ${MSG_CONSOLE} "  Old Filepath: ${source_path}"  
+  message_output ${MSG_CONSOLE} "  Old Filename: `basename ${1}`"
+  message_output ${MSG_CONSOLE} "  New Filepath: ${target_path}"
+  message_output ${MSG_CONSOLE} "  New Filename: `basename ${2}`"
   debug_file_post ${1} ${2}
   return 0;
 }
