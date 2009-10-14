@@ -59,7 +59,7 @@ tar_file_post () { :; }
 tar_file ()
 {
   tar_file_pre ${1}
-  message_output ${MSG_CONSOLE} "  Tarring" ${1}
+  message_output ${MSG_LCONSOLE} "  Tarring" ${1}
   tar ${tar_flags:='-cvf'} ${1}
   local returnval=$?
   tar_file_post ${1}
@@ -72,7 +72,7 @@ untar_file_post () { :; }
 untar_file ()
 {
   untar_file_pre ${1}
-  message_output ${MSG_CONSOLE} "  Untarring" ${1}
+  message_output ${MSG_LCONSOLE} "  Untarring" ${1}
   tar ${untar_flags:='-xvf'} ${1}
   local returnval=$?
   untar_file_post ${1}
@@ -85,7 +85,7 @@ compress_gzip_file_post () { :; }
 compress_gzip_file ()
 {
   compress_gzip_file_pre ${1}
-  message_output ${MSG_CONSOLE} "  Compressing" ${1}
+  message_output ${MSG_LCONSOLE} "  Compressing" ${1}
   gzip ${compress_flags:='-9f'} ${1}
   local returnval=$?
   compress_gzip_file_post ${1}
@@ -98,7 +98,7 @@ decompress_gzip_file_post () { :; }
 decompress_gzip_file ()
 {
   decompress_gzip_file_pre ${1}
-  message_output ${MSG_CONSOLE} "  Decompressing" ${1}
+  message_output ${MSG_LCONSOLE} "  Decompressing" ${1}
   gzip ${decompress_flags:='-vd'} ${1}
   local returnval=$?
   decompress_gzip_file_post ${1}
@@ -112,8 +112,8 @@ move_file()
 {
   move_file_pre ${1} ${2}
   local returnval=$?
-  message_output ${MSG_CONSOLE} "  Moving" ${1}
-  message_output ${MSG_CONSOLE} "  to" ${2}
+  message_output ${MSG_LCONSOLE} "  Moving" ${1}
+  message_output ${MSG_LCONSOLE} "  to" ${2}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -146,8 +146,8 @@ copy_file()
 {
   copy_file_pre ${1} ${2}
   local returnval=$?
-  message_output ${MSG_CONSOLE} "  Copying" ${1}
-  message_output ${MSG_CONSOLE} "  to" ${2}
+  message_output ${MSG_LCONSOLE} "  Copying" ${1}
+  message_output ${MSG_LCONSOLE} "  to" ${2}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -178,8 +178,8 @@ link_file()
 {
   link_file_pre ${1} ${2}
   local returnval=$?
-  message_output ${MSG_CONSOLE} "  Linking" ${1}
-  message_output ${MSG_CONSOLE} "  to" ${2}
+  message_output ${MSG_LCONSOLE} "  Linking" ${1}
+  message_output ${MSG_LCONSOLE} "  to" ${2}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -344,7 +344,7 @@ iterate_files()
         task ${file_name}
       fi
     done
-  message_output ${MSG_CONSOLE} " Completed operations on ${#filenames[@]} ${file_ext} files in ${SECONDS} seconds."
+  message_output ${MSG_CONSOLE} " Completed operations on ${#filenames[@]} ${file_ext} files in ${PWD}/ at ${SECONDS} seconds."
 }
 
 iterate_directories()
@@ -352,7 +352,7 @@ iterate_directories()
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   if [[ ${ft_multidir} ]]; then
-    message_output ${MSG_CONSOLE} "  Searching Multiple Source Directories."
+    message_output ${MSG_LCONSOLE} "  Searching Multiple Source Directories."
     gather_directories
     # DIRSTACK starts out with a useless entry to ".", we'll just stop at 1.
     # Otherwise this would read: for dir_name in ${DIRSTACK[@]}
@@ -361,12 +361,12 @@ iterate_directories()
         message_output ${MSG_INFO} "Directory Stack Contents (${#DIRSTACK[@]}): ${DIRSTACK[@]}."
         popd
         dir_name=`basename ${PWD}/`
-        message_output ${MSG_CONSOLE} "  Traversed to ${dir_name}"
+        message_output ${MSG_LCONSOLE} "  Traversed to ${dir_name}"
         iterate_files
       done
     return 0; # Success
   else
-    message_output ${MSG_CONSOLE} "  Searching Single Source Directory."
+    message_output ${MSG_LCONSOLE} "  Searching Single Source Directory."
     iterate_files
     return 0; # Success
   fi
@@ -382,7 +382,7 @@ gather_directories()
   IFS=${OLDIFS}  # Restore IFS
   # Gather filenames into array
   local directory_names=( ${dirsource} )
-  message_output ${MSG_CONSOLE} "  Found ${#directory_names[@]} directories total."
+  message_output ${MSG_LCONSOLE} "  Found ${#directory_names[@]} directories total."
 
   # Clear the directory stack once
   dirs -c

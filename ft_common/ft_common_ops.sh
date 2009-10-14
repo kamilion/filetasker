@@ -36,13 +36,14 @@
 # Start Debugging functions
 
 # These must match the sev_name translator.
-MSG_TRACE=20
-MSG_NOTICE=10
-MSG_STATUS=7
-MSG_INFO=5
-MSG_CONSOLE=3
-MSG_CRITICAL=2
-MSG_ERROR=1
+MSG_TRACE=20    # Trace messages.
+MSG_NOTICE=10   # Notice messages.
+MSG_STATUS=7    # Status messages.
+MSG_INFO=5      # Informational messages.
+MSG_LCONSOLE=4  # "Loud" console.
+MSG_CONSOLE=3   # "Normal" console.
+MSG_CRITICAL=2  # Critical failure. Bailout imminant.
+MSG_ERROR=1     # Error messages.
 
 sev_name() { # Meant to be called via backticks.
   case "${1}" in
@@ -54,6 +55,9 @@ sev_name() { # Meant to be called via backticks.
   ;;
   "3" )
     echo " CONSOLE"
+  ;;
+  "4" )
+    echo "LCONSOLE"
   ;;
   "5" )
     echo "    INFO"
@@ -85,9 +89,12 @@ message_output()
     if [[ -e "${script_path}/ft_config/ft_config_narration.on" ]]; then # Narration is on.
       echo "   Narration (SEV:`sev_name ${log_level}`): ${log_message}";
     else # Narration is off.
-      if [[ -e "${script_path}/ft_config/ft_config_loud.on" ]]; then # Console chatter enabled?
-        if [[ "${log_level}" -eq "${MSG_CONSOLE}" ]]; then # We only want messages marked CONSOLE.
-          echo "  ${log_message}"; # Console messages go to the terminal.
+      if [[ "${log_level}" -eq "${MSG_CONSOLE}" ]]; then # We only want messages marked CONSOLE.
+        echo "  ${log_message}"; # "Normal" Console messages *always* go to the terminal.
+      fi
+      if [[ -e "${script_path}/ft_config/ft_config_loud.on" ]]; then # "Loud" Console chatter enabled?
+        if [[ "${log_level}" -eq "${MSG_LCONSOLE}" ]]; then # We only want messages marked LCONSOLE.
+          echo "  ${log_message}"; # "Loud" Console messages sometimes go to the terminal.
         fi
       fi
     fi
@@ -109,13 +116,13 @@ trim_log()
   log_size=`stat -c %s ${logfile_path}${logfile_date}.${logfile_filename}.log`   # Get Filesize
   if [[ "${log_size}" -gt "${logfile_maxsize}" ]]; # if it gets too big...
   then
-    message_output ${MSG_CONSOLE} " Trimming log... ( ${log_size} bytes )"
+    message_output ${MSG_LCONSOLE} " Trimming log... ( ${log_size} bytes )"
 
     # Compress the old logfile
-    message_output ${MSG_CONSOLE} " Compressing old log...";
+    message_output ${MSG_LCONSOLE} " Compressing old log...";
     compress_gzip_file "${logfile_path}${logfile_date}.${logfile_filename}.log"
   else
-    message_output ${MSG_CONSOLE} " Log does not need trimming. ( ${log_size} bytes )"
+    message_output ${MSG_LCONSOLE} " Log does not need trimming. ( ${log_size} bytes )"
   fi
 }
 
@@ -183,7 +190,9 @@ trap_exit_dump()
     echo "       Script Path:" ${script_path}
     echo "  Main Path Prefix:" ${main_path_prefix}
     echo "Source Path Prefix:" ${source_path_prefix}
+    echo "       Source Path:" ${source_path}
     echo "Target Path Prefix:" ${target_path_prefix}
+    echo "       Target Path:" ${target_path}
     echo "           FT_Args:" ${ft_args[*]}
     echo "         Task Name:" ${task_name}
     echo "      Subtask Name:" ${subtask_name}
@@ -226,7 +235,7 @@ is_not_in_array() {
 task_init_hook() { :; }
 task_init()
 {
-  message_output ${MSG_CONSOLE} "Loaded taskfile ${task_name} at ${SECONDS} seconds."
+  message_output ${MSG_LCONSOLE} "Loaded taskfile ${task_name} at ${SECONDS} seconds."
   task_init_hook
 }
 
@@ -274,7 +283,7 @@ load_task()
 # Change directories to File Source Path
 start_filetasker()
 {
-  message_output ${MSG_CONSOLE} "Traversing to Source Directory at ${SECONDS} seconds..."
+  message_output ${MSG_LCONSOLE} "Traversing to Source Directory at ${SECONDS} seconds..."
   # Is the source path a directory?
   if [[ -d ${source_path} ]]
   then
@@ -285,17 +294,17 @@ start_filetasker()
     message_output ${MSG_CONSOLE} "FATAL: Cannot find Taskfile's Source Directory ${source_path}"
     exit ${E_MISSINGFILE}; # Throw an error
   fi
-  message_output ${MSG_CONSOLE} "Searching Source directory ${PWD}/ for ${file_ext} files"
+  message_output ${MSG_LCONSOLE} "Searching Source directory ${PWD}/ for ${file_ext} files"
 }
 
 # Change directories back to the previous working directory
 quit_filetasker()
 {
   # Head Home
-  message_output ${MSG_CONSOLE} "Traversing back to Script Directory..."
+  message_output ${MSG_LCONSOLE} "Traversing back to Script Directory..."
   cd ${script_path}
   # Log too big?
-  message_output ${MSG_CONSOLE} "Trimming log (If needed)...";
+  message_output ${MSG_LCONSOLE} "Trimming log (If needed)...";
   # Close the log, show our times, then trim the log (Prevents leaving a one-line log after gz)
   message_output ${MSG_STATUS} "LOG SECTION END -- Script took ${SECONDS} seconds to complete all operations."
   trim_log

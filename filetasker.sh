@@ -114,7 +114,9 @@ if [[ "${#}" -lt "${MIN_NUM_ARGS}" ]]
       else
         # Load SubTask
         select_subtask ${subtask_name}
-        echo "   Parameters for ${selected_subtask} subtask: ${subtask_args[@]}"
+        if [[ "${subtask_args[@]}" != "" ]]; then # Silent if blank.
+          echo "   Parameters for ${selected_subtask} subtask: ${subtask_args[@]}"
+        fi
     fi    
 fi
 
