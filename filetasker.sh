@@ -1,7 +1,7 @@
 #!/bin/bash
 # -----------
 # FileTasker Script
-ftask_version="V0.7r11"
+ftask_version="V0.7r12"
 # Output Initial Greeting
 echo ""
 echo " FileTasker ${ftask_version}"
