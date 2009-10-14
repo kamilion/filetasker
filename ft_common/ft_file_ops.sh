@@ -331,7 +331,7 @@ iterate_files()
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   # Gather filenames into array
   filenames=( `ls -1t | grep "${file_ext}" | tr '\n' ' '` )
-  message_output ${MSG_CONSOLE} " Found ${#filenames[@]} ${file_ext} files in ${PWD}/"
+  message_output ${MSG_CONSOLE} " Found ${#filenames[@]} ${file_ext} files in ${PWD#${main_path_prefix}}/"
 
   # Iterate over filenames array
   for file_name in ${filenames[@]}
@@ -344,7 +344,7 @@ iterate_files()
         task ${file_name}
       fi
     done
-  message_output ${MSG_CONSOLE} " Completed operations on ${#filenames[@]} ${file_ext} files in ${PWD}/ at ${SECONDS} seconds."
+  message_output ${MSG_CONSOLE} " Completed operations on ${#filenames[@]} ${file_ext} files in ${PWD#${main_path_prefix}}/ at ${SECONDS} seconds."
 }
 
 iterate_directories()
