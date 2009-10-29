@@ -48,6 +48,15 @@ file_ext=".nc"
 #parse_seperator="."
 # Defaults to "."
 
+# For tasks with files in multiple directories.
+#ft_multidir=1
+
+# Turn on output compression for this task
+ft_output_compression="gzip"
+
+# Gzip prompts by default if we don't force compression.
+compress_flags="-9f"
+
 file_name_prefix="itws."
 
 # -----------
@@ -55,7 +64,7 @@ file_name_prefix="itws."
 # -----------
 
 # Source files are here
-source_base_path="${source_path_prefix}weather/itws/netcdf/"
+source_base_path="${source_path_prefix}weather/ITWS/"
 source_path="${source_base_path}"
 # Target files are here
 target_base_path="${target_path_prefix}data/itws/"
@@ -130,6 +139,39 @@ task_post()
 
   return 0; # Success
 }
+
+# Hook into the task initializer to pick up our subtask params
+task_init_hook()
+{
+  if [[ "${subtask_args[@]}" == "" ]]
+    then
+      echo "   Error: Subtask requires additional arguements."
+      echo "   Supported Subtasks in ${task_name}: ${task_subtasks[@]}"
+      quit_filetasker
+      exit ${E_BADARGS};
+    else
+      # TODO: Add arg check for sourcetype
+      if [[ "${subtask_args[0]}" != "" ]]; then
+          # itws_source ends up to be a site/range structure like "DFW/1km"
+          # EX: "DFW/4km" or "ATL/10km"
+          itws_source=${subtask_args[0]}
+          # Add the Site/Range to the source base path & regen the path.
+          source_base_path="${source_base_path}${itws_source}/"
+          source_path="${source_base_path}"
+          # Add the Forecast Time to the log filename.
+          logfile_search="/"; logfile_replace="_"; # Strip any slashes
+          logfile_tag="${itws_source//$logfile_search/$logfile_replace}"
+          logfile_filename="${task_name}_${logfile_tag}"
+      fi
+      # Too many params?
+      if [[ "${subtask_args[1]}" != "" ]]; then
+          echo "   Error: Subtask given too many arguements."
+          quit_filetasker
+          exit ${E_BADARGS};
+      fi
+  fi
+}
+
 # -----------
 # End Main Task
 # -----------
