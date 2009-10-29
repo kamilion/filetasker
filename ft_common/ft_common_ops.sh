@@ -235,8 +235,8 @@ is_not_in_array() {
 task_init_hook() { :; }
 task_init()
 {
-  message_output ${MSG_LCONSOLE} "Loaded taskfile ${task_name} at ${SECONDS} seconds."
-  task_init_hook
+  task_init_hook; # Task init hooks can change the log filename.
+  message_output ${MSG_LCONSOLE} "Loaded and Initialized taskfile ${task_name} at ${SECONDS} seconds."
 }
 
 # Selects a subtask to perform.
