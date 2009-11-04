@@ -253,7 +253,7 @@ perform_fileop()
   if [[ $ft_output_compression == "gzip" ]]; # Is compression on?
     then # We need to handle filename changes from compression
       check_and_compress_gzip_file ${3}; # Run the compressor
-      if [[ $? -eq "-1"  ]]; # Did the filename change? (-1)
+      if [[ $? -eq "1"  ]]; # Did the filename change? (-1)
         then perform_fileop_post "${3}.gz"; # Filename did change, append gz.
         else perform_fileop_post ${3}; # Filename did not change, pass on unchanged.
       fi
@@ -262,8 +262,10 @@ perform_fileop()
       update_linklist ${3}; # Disabling compression bypasses the linklist hook there.
   fi
   if [[ $returnval -eq "0" ]]; then
+    ((filenames_count_success++))
     message_output ${MSG_STATUS} " File Operation Successful (${returnval}) for ${3}"
   else
+    ((filenames_count_failure++))
     message_output ${MSG_ERROR} " File Operation Failed (${returnval}) for ${3}"
   fi
   return $returnval;
@@ -327,7 +329,10 @@ iterate_files()
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   # Gather filenames into array
   filenames=( `ls -1t | grep "${file_ext}" | tr '\n' ' '` )
-  message_output ${MSG_CONSOLE} " Found ${#filenames[@]} ${file_ext} files in ${PWD#${main_path_prefix}}/"
+  filenames_count_total=${#filenames[@]}
+  filenames_count_success=0;
+  filenames_count_failure=0;
+  message_output ${MSG_CONSOLE} " Scanned ${filenames_count_total} ${file_ext} files in ${PWD#${main_path_prefix}}/"
 
   # Iterate over filenames array
   for file_name in ${filenames[@]}
@@ -340,7 +345,7 @@ iterate_files()
         task ${file_name}
       fi
     done
-  message_output ${MSG_CONSOLE} " Completed operations on ${#filenames[@]} ${file_ext} files in ${PWD#${main_path_prefix}}/ at ${SECONDS} seconds."
+  message_output ${MSG_CONSOLE} " Completed operations on ${filenames_count_success} of ${filenames_count_total} ${file_ext} files in ${PWD#${main_path_prefix}}/ at ${SECONDS} seconds."
 }
 
 iterate_directories()
@@ -500,7 +505,7 @@ check_and_compress_gzip_file()
         then # Not debug mode, compress the file.
           compress_gzip_file ${target_path}${1} # Compress the file.
           if [[ -e "${script_path}/ft_config/ft_config_gen_filelist.on" ]]; then update_linklist "${1}.gz"; fi
-          return -1; # Success, filename changed
+          return 1; # Success, filename changed
         else # No need to do anything if we're in debug mode.
           message_output ${MSG_INFO} " Skipped compression, in debug mode."
           return 0; # Success, nothing done

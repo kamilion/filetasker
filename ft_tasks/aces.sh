@@ -61,7 +61,7 @@ ft_output_compression="gzip"
 # -----------
 
 # Source files are here
-source_base_path="${source_path_prefix}weather/faa_aces/"
+source_base_path="${source_path_prefix}weather/faa_aces/CCU_CURRENT/"
 source_path="${source_base_path}"
 # Target files are here
 target_base_path="${target_path_prefix}data/faa_aces/"
@@ -102,9 +102,10 @@ task()
   
   local my_file_name=${file_name}  
   task_pre ${my_file_name}
-  local my_file_date=${dir_name}
+  local my_file_date=${dir_name%"/"}
+  local my_airport_code=${my_file_date#"ACES_"}
 
-  ar_file_name=( "aces" "${dir_name%"/"}" "CCU_${aces_date}" )
+  ar_file_name=( "aces" "${my_airport_code}" "CCU_${aces_date}" )
   # build the filename from ar_file_name
   build_filename
 

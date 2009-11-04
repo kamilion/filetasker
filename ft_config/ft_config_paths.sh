@@ -19,7 +19,7 @@
 
 # Our root operational directory.
 # This is the prefix every file-based function will use.
-main_path_prefix="/workspace/filetasker/home/"
+main_path_prefix="/home/kamilion/Git/"
 
 # -----------
 # End Variables
