@@ -88,10 +88,8 @@ task_pre()
   parse_pathname ${dir_name}
   # Parse the filename into $ar_file_name
   parse_filename ${file_name}
-  # Prep the date
-  my_dir_date=${ar_path_name[0]%"_NE"}
   # Get the date from the directory the file was stored in.
-  parse_to_epoch_from_yyyymmdd_dir ${my_dir_date#"CCU_"} # today's date not ${ar_file_name[2]:4}
+  parse_to_epoch_from_yyyymmdd_dir ${ar_path_name[0]#"CCU_"}
   return 0; # Success
 }
 
@@ -106,7 +104,7 @@ task()
   task_pre ${my_file_name}
   
   # Set up our target filename
-  ar_file_name=( "aces" "${ar_path_name[1]#"ACES_"}" "${my_dir_date%"_NE"}" )
+  ar_file_name=( "aces" "${ar_path_name[1]#"ACES_"}" "${ar_path_name[0]}" )
 
   # Build the filename from ar_file_name
   build_filename
@@ -133,6 +131,34 @@ task_post()
   target_path="${target_base_path}"
   return 0; # Success
 }
+
+: <<COMMENTBLOCK
+# Hook into the task initializer to pick up our subtask params
+task_init_hook()
+{
+  if [[ "${subtask_args[@]}" == "" ]]
+    then
+      echo "   Error: Subtask requires additional arguements."
+      echo "   Supported Subtasks in ${task_name}: ${task_subtasks[@]}"
+      quit_filetasker
+      exit ${E_BADARGS};
+    else
+      # TODO: Add arg check for sourcetype
+      if [[ "${subtask_args[0]}" != "" ]]; then
+          aces_params=${subtask_args[0]}
+          #source_base_path="${source_base_path}${aces_params}/"
+          #source_path="${source_base_path}"
+      fi
+      # Too many params?
+      if [[ "${subtask_args[1]}" != "" ]]; then
+          echo "   Error: Subtask given too many arguements."
+          quit_filetasker
+          exit ${E_BADARGS};
+      fi
+  fi
+  #echo "SUBTASK GOT ARGS: ${subtask_args[@]}"
+}
+COMMENTBLOCK
 
 # -----------
 # End Main Task

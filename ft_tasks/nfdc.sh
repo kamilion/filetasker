@@ -51,7 +51,7 @@ file_ext=".txt"
 # Defaults to "."
 
 # For tasks with files in multiple directories.
-#ft_multidir=1
+ft_multidir=1
 
 # Turn on output compression for this task
 ft_output_compression="gzip"
@@ -61,7 +61,7 @@ ft_output_compression="gzip"
 # -----------
 
 # Source files are here
-source_base_path="${source_path_prefix}weather/nfdc/"
+source_base_path="${source_path_prefix}weather/faa_aces/"
 source_path="${source_base_path}"
 # Target files are here
 target_base_path="${target_path_prefix}data/nfdc/"
@@ -89,7 +89,7 @@ task_pre()
   # Parse the filename into $ar_file_name
   parse_filename ${file_name}
   # Get the date from the directory the file was stored in.
-  parse_to_epoch_from_yyyymmdd_dir ${nfdc_date} # today's date not ${ar_file_name[2]:4}
+  parse_to_epoch_from_yyyymmdd_dir ${ar_path_name[0]#"CCU_"}
   return 0; # Success
 }
 
@@ -107,10 +107,11 @@ task()
 
   local my_file_name=${file_name}  
   task_pre ${my_file_name}
-  local my_file_date=${dir_name}
 
-  ar_file_name=( "nfdc" "${my_file_name%$file_ext}" "CCU_${nfdc_date}" )
-  # build the filename from ar_file_name
+  # Set up our target filename
+  ar_file_name=( "nfdc" "${my_file_name%$file_ext}" "${ar_path_name[0]}" )
+
+  # Build the filename from ar_file_name
   build_filename
 
   task_post
@@ -136,7 +137,7 @@ task_post()
   return 0; # Success
 }
 
-#: <<COMMENTBLOCK
+: <<COMMENTBLOCK
 # Hook into the task initializer to pick up our subtask params
 task_init_hook()
 {
@@ -162,7 +163,7 @@ task_init_hook()
   fi
   #echo "SUBTASK GOT ARGS: ${subtask_args[@]}"
 }
-#COMMENTBLOCK
+COMMENTBLOCK
 
 # -----------
 # End Main Task
