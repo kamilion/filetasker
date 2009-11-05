@@ -77,14 +77,14 @@ task_pre()
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   match_take_snapshot ${file_name} # Take a snapshot of the file
+  # Set the right dated source path
+  if [[ "$ft_multidir" -eq "1" ]]; then source_path="${source_base_path}${dir_name}/"; fi
+  # Parse the dated pathname into $ar_path_name
+  parse_pathname ${dir_name}
   # Parse the filename into $ar_file_name
   parse_filename ${file_name}
   # Get the date from the directory the file was stored in.
   parse_to_epoch_from_yyyymmdd_dir ${dir_name}
-  # Set the right dated source path
-  if [[ "$ft_multidir" -eq "1" ]]; then source_path="${source_base_path}${dir_name}/"; fi
-  # Parse the full dated pathname afterwards
-  parse_pathname ${source_path}
   return 0; # Success
 }
 

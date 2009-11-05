@@ -59,7 +59,7 @@ tar_file_post () { :; }
 tar_file ()
 {
   tar_file_pre ${1}
-  message_output ${MSG_LCONSOLE} "  Tarring" ${1}
+  message_output ${MSG_LCONSOLE} "  Tarring" ${1#${main_path_prefix}}
   tar ${tar_flags:='-cvf'} ${1}
   local returnval=$?
   tar_file_post ${1}
@@ -72,7 +72,7 @@ untar_file_post () { :; }
 untar_file ()
 {
   untar_file_pre ${1}
-  message_output ${MSG_LCONSOLE} "  Untarring" ${1}
+  message_output ${MSG_LCONSOLE} "  Untarring" ${1#${main_path_prefix}}
   tar ${untar_flags:='-xvf'} ${1}
   local returnval=$?
   untar_file_post ${1}
@@ -85,7 +85,7 @@ compress_gzip_file_post () { :; }
 compress_gzip_file ()
 {
   compress_gzip_file_pre ${1}
-  message_output ${MSG_LCONSOLE} "  Compressing" ${1}
+  message_output ${MSG_LCONSOLE} "  Compressing" ${1#${main_path_prefix}}
   gzip ${compress_flags:='-9f'} ${1}
   local returnval=$?
   compress_gzip_file_post ${1}
@@ -98,7 +98,7 @@ decompress_gzip_file_post () { :; }
 decompress_gzip_file ()
 {
   decompress_gzip_file_pre ${1}
-  message_output ${MSG_LCONSOLE} "  Decompressing" ${1}
+  message_output ${MSG_LCONSOLE} "  Decompressing" ${1#${main_path_prefix}}
   gzip ${decompress_flags:='-vd'} ${1}
   local returnval=$?
   decompress_gzip_file_post ${1}
@@ -112,8 +112,8 @@ move_file()
 {
   move_file_pre ${1} ${2}
   local returnval=$?
-  message_output ${MSG_LCONSOLE} "  Moving" ${1}
-  message_output ${MSG_LCONSOLE} "  to" ${2}
+  message_output ${MSG_LCONSOLE} "  Moving" ${1#${main_path_prefix}}
+  message_output ${MSG_LCONSOLE} "  to" ${2#${main_path_prefix}}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -146,8 +146,8 @@ copy_file()
 {
   copy_file_pre ${1} ${2}
   local returnval=$?
-  message_output ${MSG_LCONSOLE} "  Copying" ${1}
-  message_output ${MSG_LCONSOLE} "  to" ${2}
+  message_output ${MSG_LCONSOLE} "  Copying" ${1#${main_path_prefix}}
+  message_output ${MSG_LCONSOLE} "  to" ${2#${main_path_prefix}}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -178,8 +178,8 @@ link_file()
 {
   link_file_pre ${1} ${2}
   local returnval=$?
-  message_output ${MSG_LCONSOLE} "  Linking" ${1}
-  message_output ${MSG_LCONSOLE} "  to" ${2}
+  message_output ${MSG_LCONSOLE} "  Linking" ${1#${main_path_prefix}}
+  message_output ${MSG_LCONSOLE} "  to" ${2#${main_path_prefix}}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -209,9 +209,9 @@ debug_file()
 {
   debug_file_pre ${1} ${2}
   message_output ${MSG_CONSOLE} "  -------------"
-  message_output ${MSG_CONSOLE} "  Old Filepath: ${source_path}"  
+  message_output ${MSG_CONSOLE} "  Old Filepath: ${source_path#${main_path_prefix}}"  
   message_output ${MSG_CONSOLE} "  Old Filename: `basename ${1}`"
-  message_output ${MSG_CONSOLE} "  New Filepath: ${target_path}"
+  message_output ${MSG_CONSOLE} "  New Filepath: ${target_path#${main_path_prefix}}"
   message_output ${MSG_CONSOLE} "  New Filename: `basename ${2}`"
   debug_file_post ${1} ${2}
   return 0;
@@ -403,7 +403,7 @@ gather_directories()
         pushd -n `readlink -f ${directory_name}`
       fi
     done
-  message_output ${MSG_CONSOLE} " Completed discovery in ${#directory_names[@]} source directories: ${directory_names[@]#${main_path_prefix}} "
+  message_output ${MSG_CONSOLE} " Completed discovery in ${#directory_names[@]} source directories:\n ${directory_names[@]#${main_path_prefix}} "
 }
 
 walk_dirtree() # RECURSIVE ECHO -- BACKTICK MY CALL!

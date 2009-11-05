@@ -44,6 +44,8 @@ logfile_filename="${task_name}"
 # Look for files of type...
 file_ext=".nc"
 
+file_name_prefix="itws."
+
 # filename segments are seperated by...
 #parse_seperator="."
 # Defaults to "."
@@ -56,8 +58,6 @@ ft_output_compression="gzip"
 
 # Gzip prompts by default if we don't force compression.
 compress_flags="-9f"
-
-file_name_prefix="itws."
 
 # -----------
 # Paths
@@ -93,6 +93,10 @@ task_pre()
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   match_take_snapshot ${file_name} # Take a snapshot of the file
+  # Set the right dated source path
+  if [[ "$ft_multidir" -eq "1" ]]; then source_path="${source_base_path}${dir_name}/"; fi
+  # Parse the dated pathname into $ar_path_name
+  parse_pathname ${dir_name}
   # Parse the filename into an array
   parse_filename ${file_name}
   # Get the date

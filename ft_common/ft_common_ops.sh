@@ -87,14 +87,14 @@ message_output()
   # Check for Low severity events.
   if [[ "${log_level}" -le "${MSG_NOTICE}" ]]; then # Check for low severity events
     if [[ -e "${script_path}/ft_config/ft_config_narration.on" ]]; then # Narration is on.
-      echo "   Narration (SEV:`sev_name ${log_level}`): ${log_message}";
+      echo -e "   Narration (SEV:`sev_name ${log_level}`): ${log_message}";
     else # Narration is off.
       if [[ "${log_level}" -eq "${MSG_CONSOLE}" ]]; then # We only want messages marked CONSOLE.
-        echo "  ${log_message}"; # "Normal" Console messages *always* go to the terminal.
+        echo -e "  ${log_message}"; # "Normal" Console messages *always* go to the terminal.
       fi
       if [[ -e "${script_path}/ft_config/ft_config_loud.on" ]]; then # "Loud" Console chatter enabled?
         if [[ "${log_level}" -eq "${MSG_LCONSOLE}" ]]; then # We only want messages marked LCONSOLE.
-          echo "  ${log_message}"; # "Loud" Console messages sometimes go to the terminal.
+          echo -e "  ${log_message}"; # "Loud" Console messages sometimes go to the terminal.
         fi
       fi
     fi
@@ -283,6 +283,7 @@ load_task()
 # Change directories to File Source Path
 start_filetasker()
 {
+  message_output ${MSG_LCONSOLE} "Working within Base Directory ${main_path_prefix}"
   message_output ${MSG_LCONSOLE} "Traversing to Source Directory at ${SECONDS} seconds..."
   # Is the source path a directory?
   if [[ -d ${source_path} ]]
@@ -294,7 +295,7 @@ start_filetasker()
     message_output ${MSG_CONSOLE} "FATAL: Cannot find Taskfile's Source Directory ${source_path}"
     exit ${E_MISSINGFILE}; # Throw an error
   fi
-  message_output ${MSG_LCONSOLE} "Searching Source directory ${PWD}/ for ${file_ext} files"
+  message_output ${MSG_LCONSOLE} "Searching Source directory ${PWD#${main_path_prefix}}/ for ${file_ext} files"
 }
 
 # Change directories back to the previous working directory
