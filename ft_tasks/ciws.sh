@@ -51,7 +51,7 @@ file_name_prefix="ciws."
 # Defaults to "."
 
 # For tasks with files in multiple directories.
-#ft_multidir=1
+ft_multidir=1
 
 # Turn on output compression for this task
 #ft_output_compression="gzip"
@@ -64,7 +64,7 @@ compress_flags="-9f"
 # -----------
 
 # Source files are here
-source_base_path="${source_path_prefix}weather/ciws/netcdf/"
+source_base_path="${source_path_prefix}weather/ciws/"
 source_path="${source_base_path}"
 # Target files are here
 target_base_path="${target_path_prefix}data/ciws/"
