@@ -128,12 +128,6 @@ generate_yyyymmdd_date_dir_from_epoch()
 
 # Subroutines
 
-# Calling mkdir with the -p option will populate nonexistant parent dirs.
-check_and_create_target_dirs()
-{
-  generate_dir ${target_path}
-}
-
 # -----------
 # End Functions
 # -----------

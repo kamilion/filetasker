@@ -226,7 +226,7 @@ perform_fileop()
   # Update the linklist paths if that feature is enabled.
   if [[ -e "${script_path}/ft_config/ft_config_gen_filelist.on" ]]; then update_linklist_paths; fi
   # Check and create our target directories
-  check_and_create_target_dirs
+  generate_dir ${target_path}
   # Perform the selected file operation
   message_output ${MSG_INFO} " Performing subtask: ${1}"
   local returnval=$?
@@ -353,7 +353,7 @@ iterate_directories()
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   if [[ ${ft_multidir} ]]; then
-    message_output ${MSG_LCONSOLE} "  Searching Multiple Source Directories."
+    message_output ${MSG_LCONSOLE} "  Recursive Searching Multiple Source Directories."
     gather_directories
     # DIRSTACK starts out with a useless entry to ".", we'll just stop at 1.
     # Otherwise this would read: for dir_name in ${DIRSTACK[@]}
@@ -361,7 +361,7 @@ iterate_directories()
       do
         message_output ${MSG_INFO} "Directory Stack Contents (${#DIRSTACK[@]}): ${DIRSTACK[@]}."
         popd
-        dir_name=`basename ${PWD}/`
+        dir_name=${PWD#${source_path}}
         message_output ${MSG_LCONSOLE} "  Traversed to ${dir_name}"
         iterate_files
       done
@@ -379,11 +379,13 @@ gather_directories()
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   IFS=$'\n'   # Enable for loops over items with spaces in their name
   # Magic Command to run to gather directory list
-  local dirsource=`ls -1Ft | grep "/"`
+  #local dirsource=`ls -1Ft | grep "/"`
+  local dirsource=`walk_dirtree $PWD`
   IFS=${OLDIFS}  # Restore IFS
+
   # Gather filenames into array
   local directory_names=( ${dirsource} )
-  message_output ${MSG_LCONSOLE} "  Found ${#directory_names[@]} directories total."
+  message_output ${MSG_LCONSOLE} "  Found ${#directory_names[@]} source directories."
 
   # Clear the directory stack once
   dirs -c
@@ -401,17 +403,19 @@ gather_directories()
         pushd -n `readlink -f ${directory_name}`
       fi
     done
-  message_output ${MSG_CONSOLE} " Completed discovery in ${#directory_names[@]} directories: ${directory_names[@]}"
+  message_output ${MSG_CONSOLE} " Completed discovery in ${#directory_names[@]} source directories: ${directory_names[@]#${main_path_prefix}} "
 }
 
-walk_directory_tree()
-{ # Call: walk_directory_tree "$1" "\.sh$"
-  ls "$1" | while IFS= read input; do  # ls <directory> and pipe to read, output to variable named 'input'
-    if [ -d "$1/$input" ]; then # if it's a directory
-      echo `readlink -f $1/$input`"/"; # Output it's name
-      walk_directory_tree "$1/$input" "$2" | sed -r 's/^/\t/'  # Recurse into directory, replace whitespace with "\t" (tab)
-    else # Not a directory
-      echo `readlink -f $1/$input` | grep -E "$2" #Is it a file that matches our spec?
+walk_dirtree() # RECURSIVE ECHO -- BACKTICK MY CALL!
+{ # Call: `walk_dirtree <base_directory>`
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  IFS=${OLDIFS}; message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  ls -1Ft "${1}" | grep "/" | while IFS=$'\n' read directory; do  # magic directory filter
+    if [ -d "${1}/${directory}" ]; then # if it's a directory
+      # NOTE: pushd -n will add to $DIRSTACK without changing $PWD.
+      # NOTE: `readlink -f $dir` will expand the full path.
+      echo `readlink -f ${1}/${directory}`"/"; # Add it to the queue
+      walk_dirtree "${1}/${directory%"/"}" # Recurse into directory
     fi
   done
 }

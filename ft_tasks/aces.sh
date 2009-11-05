@@ -61,7 +61,7 @@ ft_output_compression="gzip"
 # -----------
 
 # Source files are here
-source_base_path="${source_path_prefix}weather/faa_aces/CCU_CURRENT/"
+source_base_path="${source_path_prefix}weather/faa_aces/"
 source_path="${source_base_path}"
 # Target files are here
 target_base_path="${target_path_prefix}data/faa_aces/"
@@ -82,14 +82,16 @@ task_pre()
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   match_take_snapshot ${file_name} # Take a snapshot of the file
-  # Parse the filename into $ar_file_name
-  parse_filename ${file_name}
-  # Get the date from the directory the file was stored in.
-  parse_to_epoch_from_yyyymmdd_dir ${aces_date} # today's date not ${ar_file_name[2]:4}
   # Set the right dated source path
   if [[ "$ft_multidir" -eq "1" ]]; then source_path="${source_base_path}${dir_name}/"; fi
-  # Parse the full dated pathname afterwards
-  parse_pathname ${source_path}
+  # Parse the dated pathname into $ar_path_name
+  parse_pathname ${dir_name}
+  # Parse the filename into $ar_file_name
+  parse_filename ${file_name}
+  # Prep the date
+  my_dir_date=${ar_path_name[0]%"_NE"}
+  # Get the date from the directory the file was stored in.
+  parse_to_epoch_from_yyyymmdd_dir ${my_dir_date#"CCU_"} # today's date not ${ar_file_name[2]:4}
   return 0; # Success
 }
 
@@ -102,11 +104,11 @@ task()
   
   local my_file_name=${file_name}  
   task_pre ${my_file_name}
-  local my_file_date=${dir_name%"/"}
-  local my_airport_code=${my_file_date#"ACES_"}
+  
+  # Set up our target filename
+  ar_file_name=( "aces" "${ar_path_name[1]#"ACES_"}" "${my_dir_date%"_NE"}" )
 
-  ar_file_name=( "aces" "${my_airport_code}" "CCU_${aces_date}" )
-  # build the filename from ar_file_name
+  # Build the filename from ar_file_name
   build_filename
 
   task_post
@@ -131,34 +133,6 @@ task_post()
   target_path="${target_base_path}"
   return 0; # Success
 }
-
-#: <<COMMENTBLOCK
-# Hook into the task initializer to pick up our subtask params
-task_init_hook()
-{
-  if [[ "${subtask_args[@]}" == "" ]]
-    then
-      echo "   Error: Subtask requires additional arguements."
-      echo "   Supported Subtasks in ${task_name}: ${task_subtasks[@]}"
-      quit_filetasker
-      exit ${E_BADARGS};
-    else
-      # TODO: Add arg check for sourcetype
-      if [[ "${subtask_args[0]}" != "" ]]; then
-          aces_date=${subtask_args[0]}
-          #source_base_path="${source_base_path}${aces_date}/"
-          #source_path="${source_base_path}"
-      fi
-      # Too many params?
-      if [[ "${subtask_args[1]}" != "" ]]; then
-          echo "   Error: Subtask given too many arguements."
-          quit_filetasker
-          exit ${E_BADARGS};
-      fi
-  fi
-  #echo "SUBTASK GOT ARGS: ${subtask_args[@]}"
-}
-#COMMENTBLOCK
 
 # -----------
 # End Main Task
