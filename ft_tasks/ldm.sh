@@ -84,7 +84,7 @@ task_pre()
   # Parse the filename into $ar_file_name
   parse_filename ${file_name}
   # Get the date from the directory the file was stored in.
-  parse_to_epoch_from_yyyymmdd_dir ${dir_name}
+  parse_to_epoch_from_yyyymmdd_dir ${ar_path_name[1]}
   return 0; # Success
 }
 
@@ -100,7 +100,7 @@ task()
   local my_file_date=${dir_name}
 
   # TODO: filter in the source, format, and date from the directory. - DONE
-  ar_file_name=( "ldm" "ncfw6" "${ldm_source}" "${my_file_date}" "${ar_file_name[@]}" )
+  ar_file_name=( "ldm" "ncfw6" "${ar_path_name[0]}" "${ar_path_name[1]}" "${ar_file_name[@]}" )
   
   # build the filename from ar_file_name
   build_filename
@@ -119,7 +119,7 @@ task_post()
   # Dated Directory needs to be generated from the timestamp.
   generate_yyyy_mm_dd_date_dir_from_epoch ${file_epoch}
   # Set the right dated target path (date_dir has trailing /)
-  target_path="${target_path}${date_dir}${ldm_source}/"
+  target_path="${target_path}${date_dir}${ar_path_name[0]}/"
   # Perform the file operation (takes care of all paths for us)
   perform_fileop ${selected_subtask} ${orig_file_name} ${new_file_name}
   # Set the original source & target path
@@ -128,6 +128,7 @@ task_post()
   return 0; # Success
 }
 
+: <<COMMENTBLOCK
 # Hook into the task initializer to pick up our subtask params
 task_init_hook()
 {
@@ -158,6 +159,7 @@ task_init_hook()
   fi
   #echo "SUBTASK GOT ARGS: ${subtask_args[@]}"
 }
+COMMENTBLOCK
 
 # -----------
 # End Main Task

@@ -312,6 +312,8 @@ quit_filetasker()
   echo ""
 }
 
+COMMENTBLOCK() { :; } # Makes things easy to comment out.
+
 #Dummy functions to override from Taskfiles
 task_pre() { :; }
 task_post() { :; }
