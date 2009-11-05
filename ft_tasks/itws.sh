@@ -51,7 +51,7 @@ file_name_prefix="itws."
 # Defaults to "."
 
 # For tasks with files in multiple directories.
-#ft_multidir=1
+ft_multidir=1
 
 # Turn on output compression for this task
 ft_output_compression="gzip"
@@ -64,7 +64,7 @@ compress_flags="-9f"
 # -----------
 
 # Source files are here
-source_base_path="${source_path_prefix}weather/ITWS/"
+source_base_path="${source_path_prefix}weather/itws/"
 source_path="${source_base_path}"
 # Target files are here
 target_base_path="${target_path_prefix}data/itws/"
@@ -114,7 +114,7 @@ task()
   local my_file_name=${file_name}
   task_pre ${my_file_name}
 
-  # Remove the first four filename indexes (edu, mit, ll, and wx)
+  # Remove the first four (0-3) filename indexes (edu, mit, ll, and wx)
   ar_file_name=("${ar_file_name[@]:4}")
 
   # Build the filename from ar_file_name
@@ -134,7 +134,7 @@ task_post()
   # Dated Directory needs to be generated from the timestamp.
   generate_yyyy_mm_dd_date_dir_from_epoch ${file_epoch}
   # Set the right dated target path (date_dir has trailing /)
-  target_path="${target_path}${date_dir}"
+  target_path="${target_path}${ar_path_name[0]}/${date_dir}${ar_path_name[1]}/"
   # Perform the file operation (takes care of all paths for us)
   perform_fileop ${selected_subtask} ${orig_file_name} ${new_file_name}
   # Set the original source & target path
@@ -144,6 +144,7 @@ task_post()
   return 0; # Success
 }
 
+: <<COMMENTBLOCK
 # Hook into the task initializer to pick up our subtask params
 task_init_hook()
 {
@@ -175,6 +176,7 @@ task_init_hook()
       fi
   fi
 }
+COMMENTBLOCK
 
 # -----------
 # End Main Task
