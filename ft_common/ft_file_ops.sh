@@ -404,6 +404,18 @@ gather_directories()
   message_output ${MSG_CONSOLE} " Completed discovery in ${#directory_names[@]} directories: ${directory_names[@]}"
 }
 
+walk_directory_tree()
+{ # Call: walk_directory_tree "$1" "\.sh$"
+  ls "$1" | while IFS= read input; do  # ls <directory> and pipe to read, output to variable named 'input'
+    if [ -d "$1/$input" ]; then # if it's a directory
+      echo `readlink -f $1/$input`"/"; # Output it's name
+      walk_directory_tree "$1/$input" "$2" | sed -r 's/^/\t/'  # Recurse into directory, replace whitespace with "\t" (tab)
+    else # Not a directory
+      echo `readlink -f $1/$input` | grep -E "$2" #Is it a file that matches our spec?
+    fi
+  done
+}
+
 # Start Sub Routines
 
 # How long should match sleep?
