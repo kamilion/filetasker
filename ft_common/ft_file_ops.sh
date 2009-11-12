@@ -4,7 +4,7 @@
 # CMDLine Inputs: NIL (Not Executable)
 # -----------
 # Common Operations Functions
-# Sourced by ft_common_ops.sh
+# Sourced by ft_file_core.sh
 # -----------
 # End Program Information
 # -----------
