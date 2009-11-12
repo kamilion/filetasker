@@ -315,10 +315,13 @@ quit_filetasker()
 COMMENTBLOCK() { :; } # Makes things easy to comment out.
 
 #Dummy functions to override from Taskfiles
-task_pre() { :; }
-task_post() { :; }
-task_subtask() { :; }
-task() { :; }
+task_pre() { :; } # Called manually from beginning of task()
+task_post() { :; } # Called manually at end of task()
+task_subtask() { :; } # Defined for special tasks
+task() { :; } # Called automatically by iterate_files()
+task_multidir_pre() { :; } # Called automatically before directory pop
+task_multidir_info() { :; } # Called automatically after directory pop, before iterate_files()
+task_multidir_post() { :; } # Called automatically after iterate_files() completes
 # End Main Routines
 
 # -----------

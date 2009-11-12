@@ -142,10 +142,13 @@ iterate_directories()
     while [[ "${#DIRSTACK[@]}" -gt "1" ]]
       do
         message_output ${MSG_INFO} "Directory Stack Contents (${#DIRSTACK[@]}): ${DIRSTACK[@]}."
+        task_multidir_pre
         popd
         dir_name=${PWD#${source_path}}
         message_output ${MSG_VERBOSE} "  Traversed to ${dir_name}"
+        task_multidir_info
         iterate_files
+        task_multidir_post
       done
     return 0; # Success
   else
