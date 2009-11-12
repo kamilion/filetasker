@@ -151,7 +151,7 @@ check_and_decompress_gzip_file()
 
 # Output Loader information
 if [[ -e "${script_path}/ft_config/ft_config_verbose.on" ]]; then
-  echo "  FileTasker File Compression Module ${ftask_version} Loaded at ${SECONDS} seconds."; fi
+  echo "  FileTasker File Compression Module Loaded at ${SECONDS} seconds."; fi
 # -----------
 # End Main Program
 # -----------

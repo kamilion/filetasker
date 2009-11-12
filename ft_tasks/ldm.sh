@@ -192,7 +192,7 @@ if [[ "${parent_script}" == "${my_name}" ]]
 then
     echo "   Supported Subtasks in $my_name: ${task_subtasks[@]}"
 else
-    echo "   FileTasker LDM Operations Module ${ftask_version} Loaded at ${SECONDS} seconds."
+    echo "   FileTasker LDM Operations Module Loaded at ${SECONDS} seconds."
 fi
 
 # -----------

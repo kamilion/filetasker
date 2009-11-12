@@ -247,7 +247,7 @@ update_linklist_paths()
 
 # Output Loader information
 if [[ -e "${script_path}/ft_config/ft_config_verbose.on" ]]; then
-  echo "  FileTasker File Operations Module ${ftask_version} Loaded at ${SECONDS} seconds."; fi
+  echo "  FileTasker File Operations Module Loaded at ${SECONDS} seconds."; fi
 # -----------
 # End Main Program
 # -----------

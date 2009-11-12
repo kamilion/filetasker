@@ -246,7 +246,7 @@ trap_debug_task_dump()
 
 # Output Loader information
 if [[ -e "${script_path}/ft_config/ft_config_verbose.on" ]]; then
-  echo "  FileTasker Common Logging Module ${ftask_version} Loaded at ${SECONDS} seconds."; fi
+  echo "  FileTasker Common Logging Module Loaded at ${SECONDS} seconds."; fi
 # -----------
 # End Main Program
 # -----------
