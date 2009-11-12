@@ -328,6 +328,9 @@ task() { :; }
 # Load Logging Operation Functions First
 #source ${script_path}/ft_common/ft_logging_ops.sh
 
+# Load File Core Functions
+source ${script_path}/ft_common/ft_file_core.sh
+
 # Load File Operation Functions
 source ${script_path}/ft_common/ft_file_ops.sh
 
