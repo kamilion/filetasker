@@ -228,7 +228,7 @@ source ${script_path}/ft_common/ft_file_matching.sh
 # -----------
 
 # Output Loader information
-if [[ -e "${script_path}/ft_config/ft_config_loud.on" ]]; then
+if [[ -e "${script_path}/ft_config/ft_config_verbose.on" ]]; then
   echo "  FileTasker File Core Module ${ftask_version} Loaded at ${SECONDS} seconds."; fi
 # -----------
 # End Main Program
