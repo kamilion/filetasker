@@ -14,7 +14,7 @@
 # -----------
 # Filename Outputs:
 # XML.GZ
-#  asdi.200903010000.xml.gz
+#  asdi.200903010000.xml.bin
 # -----------
 # End Program Information
 # -----------
@@ -93,7 +93,7 @@ task()
   task_pre ${my_file_name}
   local my_file_date=${dir_name}
 
-  # from asdi_xml.200903010000 to asdi.200903010000.xml.gz
+  # from asdi_xml.200903010000 to asdi.200903010000.xml.bin
   ar_file_name[0]="asdi"  # Removes the _xml designation
   ar_file_name=( "${ar_file_name[@]}" "xml" "bin" ) # Adds proper extensions
   
