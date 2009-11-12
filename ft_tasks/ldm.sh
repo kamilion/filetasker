@@ -32,8 +32,6 @@ task_subtasks=( debug link copy move )
 # Strings
 # -----------
 task_name="ldm"
-# LDM's log filename is overridden in task_init_hook below!
-logfile_filename="${task_name}"
 
 # Look for files of type...
 file_ext=".grib"
@@ -130,14 +128,20 @@ task_post()
 
 task_multidir_info() # Called automatically after directory pop, before iterate_files()
 {
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  # Parse the dated pathname into $ar_path_name
+  parse_pathname ${dir_name}
   # Add the Forecast Time to the log filename.
-  logfile_filename="${task_name}_${ar_path_name[0]}"
+  switch_to_log "${task_name}_${ar_path_name[0]}"
 }
 
 task_complete() # Called automatically at the end of iterate_directories()
 {
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   # Return to the original log filename.
-  logfile_filename="${task_name}"
+  switch_to_log "${task_name}"
 }
 
 : <<COMMENTBLOCK
