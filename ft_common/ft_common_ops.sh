@@ -331,6 +331,9 @@ task() { :; }
 # Load File Operation Functions
 source ${script_path}/ft_common/ft_file_ops.sh
 
+# Load File Compression Functions
+source ${script_path}/ft_common/ft_file_compression.sh
+
 # -----------
 # Date Functions
 # -----------
