@@ -319,6 +319,7 @@ task_pre() { :; } # Called manually from beginning of task()
 task_post() { :; } # Called manually at end of task()
 task_subtask() { :; } # Defined for special tasks
 task() { :; } # Called automatically by iterate_files()
+task_complete() { :; } # Called once automatically at the end of iterate_directories()
 task_multidir_pre() { :; } # Called automatically before directory pop
 task_multidir_info() { :; } # Called automatically after directory pop, before iterate_files()
 task_multidir_post() { :; } # Called automatically after iterate_files() completes

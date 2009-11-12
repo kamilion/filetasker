@@ -156,6 +156,7 @@ iterate_directories()
     iterate_files; # Fired to perform task() operations on files in directory
     return 0; # Success
   fi
+  task_complete
 }
 
 gather_directories()
