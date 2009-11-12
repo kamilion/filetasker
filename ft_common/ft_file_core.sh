@@ -150,13 +150,14 @@ iterate_directories()
         iterate_files; # Fired to perform task() operations on files in directory
         task_multidir_post; # Fired after completing a directory
       done
+    task_complete; # Fired to indicate task completion
     return 0; # Success
   else
     message_output ${MSG_VERBOSE} "  Searching Single Source Directory.";
     iterate_files; # Fired to perform task() operations on files in directory
+    task_complete; # Fired to indicate task completion
     return 0; # Success
   fi
-  task_complete
 }
 
 gather_directories()
@@ -189,7 +190,7 @@ gather_directories()
         pushd -n `readlink -f ${directory_name}`;
       fi
     done
-  message_output ${MSG_CONSOLE} " Completed discovery in ${#directory_names[@]} source directories:\n ${directory_names[@]#${main_path_prefix}} ";
+  message_output ${MSG_CONSOLE} " Completed discovery in ${#directory_names[@]} source directories:\n    ${directory_names[@]#${main_path_prefix}} ";
 }
 
 walk_dirtree() # RECURSIVE ECHO -- BACKTICK MY CALL!
