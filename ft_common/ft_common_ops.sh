@@ -92,7 +92,7 @@ message_output()
       if [[ "${log_level}" -eq "${MSG_CONSOLE}" ]]; then # We only want messages marked CONSOLE.
         echo -e "  ${log_message}"; # "Normal" Console messages *always* go to the terminal.
       fi
-      if [[ -e "${script_path}/ft_config/ft_config_loud.on" ]]; then # "Verbose" Console chatter enabled?
+      if [[ -e "${script_path}/ft_config/ft_config_verbose.on" ]]; then # "Verbose" Console chatter enabled?
         if [[ "${log_level}" -eq "${MSG_VERBOSE}" ]]; then # We only want messages marked VERBOSE.
           echo -e "  ${log_message}"; # "Loud" Console messages sometimes go to the terminal.
         fi

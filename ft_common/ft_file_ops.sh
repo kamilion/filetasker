@@ -428,8 +428,8 @@ match_sleep()
 { 
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
-  if [[ -e "${script_path}/ft_config/ft_config_turbo.on" ]]; then
-    message_output ${MSG_NOTICE} " File Match - TURBO ENABLED - Skipping Match Sleep"
+  if [[ -e "${script_path}/ft_config/ft_config_match_sleep.off" ]]; then
+    message_output ${MSG_NOTICE} " File Match - Skipping Match Sleep"
   else
     sleep ${1}; 
   fi
