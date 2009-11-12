@@ -128,6 +128,18 @@ task_post()
   return 0; # Success
 }
 
+task_multidir_info() # Called automatically after directory pop, before iterate_files()
+{
+  # Add the Forecast Time to the log filename.
+  logfile_filename="${task_name}_${ar_path_name[0]}"
+}
+
+task_complete() # Called automatically at the end of iterate_directories()
+{
+  # Return to the original log filename.
+  logfile_filename="${task_name}"
+}
+
 : <<COMMENTBLOCK
 # Hook into the task initializer to pick up our subtask params
 task_init_hook()
