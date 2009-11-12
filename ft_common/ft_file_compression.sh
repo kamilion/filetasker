@@ -96,6 +96,34 @@ decompress_gzip_file ()
 
 # Start Sub Routines
 
+check_and_compress_gzip_file()
+{
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  local my_filename=${1}
+  local is_gzip_ext=${my_filename:(-3)}  # Capture the last three characters of the filename
+  if [[ "${is_gzip_ext}" == ".gz" ]];
+    then
+      message_output ${MSG_STATUS} " File is already compressed with gzip." # We're already gzipped.
+      if [[ "${selected_subtask}" != "debug" ]]; then # No targets to generate filelists or linklists in debug mode!
+          if [[ -e "${script_path}/ft_config/ft_config_gen_filelist.on" ]]; then update_linklist ${1}; fi
+      fi
+      return 0; # Success, already compressed, don't change filename
+    else
+      message_output ${MSG_NOTICE} " File not compressed. Compressing with gzip..."
+      if [[ "${selected_subtask}" != "debug" ]];
+        then # Not debug mode, compress the file.
+          compress_gzip_file ${target_path}${1} # Compress the file.
+          if [[ -e "${script_path}/ft_config/ft_config_gen_filelist.on" ]]; then update_linklist "${1}.gz"; fi
+          return 1; # Success, filename changed
+        else # No need to do anything if we're in debug mode.
+          message_output ${MSG_INFO} " Skipped compression, in debug mode."
+          return 0; # Success, nothing done
+      fi
+      return 0; # Success, nothing done?
+  fi
+}
+
 check_and_decompress_gzip_file()
 {
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
