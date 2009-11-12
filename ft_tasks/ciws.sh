@@ -39,8 +39,6 @@ task_subtasks=( debug link copy move )
 # -----------
 task_name="ciws"
 
-logfile_filename="${task_name}"
-
 # Look for files of type...
 file_ext=".nc"
 

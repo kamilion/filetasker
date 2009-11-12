@@ -41,8 +41,6 @@ ACES_Sources=( ZAB ZAU ZBW ZDC ZDV ZFW ZHU ZID ZJX ZKC ZLA ZLC ZMA ZME ZMP ZNY Z
 # -----------
 task_name="aces"
 
-logfile_filename="${task_name}"
-
 # Look for files of type...
 file_ext="aces.dat"
 

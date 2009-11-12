@@ -39,8 +39,6 @@ task_subtasks=( debug link copy move )
 # -----------
 task_name="tracon"
 
-logfile_filename="${task_name}"
-
 # Look for files of type...
 file_ext=".gz"
 

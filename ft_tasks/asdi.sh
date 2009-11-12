@@ -33,8 +33,6 @@ task_subtasks=( debug link copy move )
 # -----------
 task_name="asdi"
 
-logfile_filename="${task_name}"
-
 # Look for files of type...
 file_ext="asdi_xml"
 # HACK: since we grep for the contents of file_ext now 

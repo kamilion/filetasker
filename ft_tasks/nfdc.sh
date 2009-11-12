@@ -41,8 +41,6 @@ NFDC_Sources=( apt arb awy fix ils nav stardp sua )
 # -----------
 task_name="nfdc"
 
-logfile_filename="${task_name}"
-
 # Look for files of type...
 file_ext=".txt"
 
