@@ -59,7 +59,7 @@ tar_file_post () { :; }
 tar_file ()
 {
   tar_file_pre ${1}
-  message_output ${MSG_LCONSOLE} "  Tarring" ${1#${main_path_prefix}}
+  message_output ${MSG_VERBOSE} "  Tarring" ${1#${main_path_prefix}}
   tar ${tar_flags:='-cvf'} ${1}
   local returnval=$?
   tar_file_post ${1}
@@ -72,7 +72,7 @@ untar_file_post () { :; }
 untar_file ()
 {
   untar_file_pre ${1}
-  message_output ${MSG_LCONSOLE} "  Untarring" ${1#${main_path_prefix}}
+  message_output ${MSG_VERBOSE} "  Untarring" ${1#${main_path_prefix}}
   tar ${untar_flags:='-xvf'} ${1}
   local returnval=$?
   untar_file_post ${1}
@@ -85,7 +85,7 @@ compress_gzip_file_post () { :; }
 compress_gzip_file ()
 {
   compress_gzip_file_pre ${1}
-  message_output ${MSG_LCONSOLE} "  Compressing" ${1#${main_path_prefix}}
+  message_output ${MSG_VERBOSE} "  Compressing" ${1#${main_path_prefix}}
   gzip ${compress_flags:='-9f'} ${1}
   local returnval=$?
   compress_gzip_file_post ${1}
@@ -98,7 +98,7 @@ decompress_gzip_file_post () { :; }
 decompress_gzip_file ()
 {
   decompress_gzip_file_pre ${1}
-  message_output ${MSG_LCONSOLE} "  Decompressing" ${1#${main_path_prefix}}
+  message_output ${MSG_VERBOSE} "  Decompressing" ${1#${main_path_prefix}}
   gzip ${decompress_flags:='-vd'} ${1}
   local returnval=$?
   decompress_gzip_file_post ${1}
@@ -112,8 +112,8 @@ move_file()
 {
   move_file_pre ${1} ${2}
   local returnval=$?
-  message_output ${MSG_LCONSOLE} "  Moving" ${1#${main_path_prefix}}
-  message_output ${MSG_LCONSOLE} "  to" ${2#${main_path_prefix}}
+  message_output ${MSG_VERBOSE} "  Moving" ${1#${main_path_prefix}}
+  message_output ${MSG_VERBOSE} "  to" ${2#${main_path_prefix}}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -146,8 +146,8 @@ copy_file()
 {
   copy_file_pre ${1} ${2}
   local returnval=$?
-  message_output ${MSG_LCONSOLE} "  Copying" ${1#${main_path_prefix}}
-  message_output ${MSG_LCONSOLE} "  to" ${2#${main_path_prefix}}
+  message_output ${MSG_VERBOSE} "  Copying" ${1#${main_path_prefix}}
+  message_output ${MSG_VERBOSE} "  to" ${2#${main_path_prefix}}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -178,8 +178,8 @@ link_file()
 {
   link_file_pre ${1} ${2}
   local returnval=$?
-  message_output ${MSG_LCONSOLE} "  Linking" ${1#${main_path_prefix}}
-  message_output ${MSG_LCONSOLE} "  to" ${2#${main_path_prefix}}
+  message_output ${MSG_VERBOSE} "  Linking" ${1#${main_path_prefix}}
+  message_output ${MSG_VERBOSE} "  to" ${2#${main_path_prefix}}
   if [[ -e ${2} ]]; then
     # Yes, it exists.
     if [[ -h ${2} ]]; then
@@ -353,7 +353,7 @@ iterate_directories()
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   if [[ ${ft_multidir} ]]; then
-    message_output ${MSG_LCONSOLE} "  Recursive Searching Multiple Source Directories."
+    message_output ${MSG_VERBOSE} "  Recursive Searching Multiple Source Directories."
     gather_directories
     # DIRSTACK starts out with a useless entry to ".", we'll just stop at 1.
     # Otherwise this would read: for dir_name in ${DIRSTACK[@]}
@@ -362,12 +362,12 @@ iterate_directories()
         message_output ${MSG_INFO} "Directory Stack Contents (${#DIRSTACK[@]}): ${DIRSTACK[@]}."
         popd
         dir_name=${PWD#${source_path}}
-        message_output ${MSG_LCONSOLE} "  Traversed to ${dir_name}"
+        message_output ${MSG_VERBOSE} "  Traversed to ${dir_name}"
         iterate_files
       done
     return 0; # Success
   else
-    message_output ${MSG_LCONSOLE} "  Searching Single Source Directory."
+    message_output ${MSG_VERBOSE} "  Searching Single Source Directory."
     iterate_files
     return 0; # Success
   fi
@@ -385,7 +385,7 @@ gather_directories()
 
   # Gather filenames into array
   local directory_names=( ${dirsource} )
-  message_output ${MSG_LCONSOLE} "  Found ${#directory_names[@]} source directories."
+  message_output ${MSG_VERBOSE} "  Found ${#directory_names[@]} source directories."
 
   # Clear the directory stack once
   dirs -c

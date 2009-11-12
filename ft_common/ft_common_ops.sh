@@ -40,7 +40,7 @@ MSG_TRACE=20    # Trace messages.
 MSG_NOTICE=10   # Notice messages.
 MSG_STATUS=7    # Status messages.
 MSG_INFO=5      # Informational messages.
-MSG_LCONSOLE=4  # "Loud" console.
+MSG_VERBOSE=4  # "Verbose" console.
 MSG_CONSOLE=3   # "Normal" console.
 MSG_CRITICAL=2  # Critical failure. Bailout imminant.
 MSG_ERROR=1     # Error messages.
@@ -57,7 +57,7 @@ sev_name() { # Meant to be called via backticks.
     echo " CONSOLE"
   ;;
   "4" )
-    echo "LCONSOLE"
+    echo "VERBOSE"
   ;;
   "5" )
     echo "    INFO"
@@ -92,8 +92,8 @@ message_output()
       if [[ "${log_level}" -eq "${MSG_CONSOLE}" ]]; then # We only want messages marked CONSOLE.
         echo -e "  ${log_message}"; # "Normal" Console messages *always* go to the terminal.
       fi
-      if [[ -e "${script_path}/ft_config/ft_config_loud.on" ]]; then # "Loud" Console chatter enabled?
-        if [[ "${log_level}" -eq "${MSG_LCONSOLE}" ]]; then # We only want messages marked LCONSOLE.
+      if [[ -e "${script_path}/ft_config/ft_config_loud.on" ]]; then # "Verbose" Console chatter enabled?
+        if [[ "${log_level}" -eq "${MSG_VERBOSE}" ]]; then # We only want messages marked VERBOSE.
           echo -e "  ${log_message}"; # "Loud" Console messages sometimes go to the terminal.
         fi
       fi
@@ -116,13 +116,13 @@ trim_log()
   log_size=`stat -c %s ${logfile_path}${logfile_date}.${logfile_filename}.log`   # Get Filesize
   if [[ "${log_size}" -gt "${logfile_maxsize}" ]]; # if it gets too big...
   then
-    message_output ${MSG_LCONSOLE} " Trimming log... ( ${log_size} bytes )"
+    message_output ${MSG_VERBOSE} " Trimming log... ( ${log_size} bytes )"
 
     # Compress the old logfile
-    message_output ${MSG_LCONSOLE} " Compressing old log...";
+    message_output ${MSG_VERBOSE} " Compressing old log...";
     compress_gzip_file "${logfile_path}${logfile_date}.${logfile_filename}.log"
   else
-    message_output ${MSG_LCONSOLE} " Log does not need trimming. ( ${log_size} bytes )"
+    message_output ${MSG_VERBOSE} " Log does not need trimming. ( ${log_size} bytes )"
   fi
 }
 
@@ -236,7 +236,7 @@ task_init_hook() { :; }
 task_init()
 {
   task_init_hook; # Task init hooks can change the log filename.
-  message_output ${MSG_LCONSOLE} "Loaded and Initialized taskfile ${task_name} at ${SECONDS} seconds."
+  message_output ${MSG_VERBOSE} "Loaded and Initialized taskfile ${task_name} at ${SECONDS} seconds."
 }
 
 # Selects a subtask to perform.
@@ -283,8 +283,8 @@ load_task()
 # Change directories to File Source Path
 start_filetasker()
 {
-  message_output ${MSG_LCONSOLE} "Working within Base Directory ${main_path_prefix}"
-  message_output ${MSG_LCONSOLE} "Traversing to Source Directory at ${SECONDS} seconds..."
+  message_output ${MSG_VERBOSE} "Working within Base Directory ${main_path_prefix}"
+  message_output ${MSG_VERBOSE} "Traversing to Source Directory at ${SECONDS} seconds..."
   # Is the source path a directory?
   if [[ -d ${source_path} ]]
   then
@@ -295,17 +295,17 @@ start_filetasker()
     message_output ${MSG_CONSOLE} "FATAL: Cannot find Taskfile's Source Directory ${source_path}"
     exit ${E_MISSINGFILE}; # Throw an error
   fi
-  message_output ${MSG_LCONSOLE} "Searching Source directory ${PWD#${main_path_prefix}}/ for ${file_ext} files"
+  message_output ${MSG_VERBOSE} "Searching Source directory ${PWD#${main_path_prefix}}/ for ${file_ext} files"
 }
 
 # Change directories back to the previous working directory
 quit_filetasker()
 {
   # Head Home
-  message_output ${MSG_LCONSOLE} "Traversing back to Script Directory..."
+  message_output ${MSG_VERBOSE} "Traversing back to Script Directory..."
   cd ${script_path}
   # Log too big?
-  message_output ${MSG_LCONSOLE} "Trimming log (If needed)...";
+  message_output ${MSG_VERBOSE} "Trimming log (If needed)...";
   # Close the log, show our times, then trim the log (Prevents leaving a one-line log after gz)
   message_output ${MSG_STATUS} "LOG SECTION END -- Script took ${SECONDS} seconds to complete all operations."
   trim_log
