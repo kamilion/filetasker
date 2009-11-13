@@ -108,6 +108,46 @@ load_task()
   task_init
 }
 
+# Chains a new instance of Filetasker and waits for it's completion
+chain_task()
+{ # Input: $1 - Task, $2 - Subtask, $3 - Additional Parameters
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  if [[ -e "${script_path}/ft_config/ft_config_chain.on" ]]; then
+    message_output ${MSG_VERBOSE} "Task chaining - executing task: ${@}"
+    ${script_path}/filetasker.sh ${@} & # Execute another filetasker in the background
+    wait; # for background filetasker job to complete
+    returnval=$?
+    if [[ $returnval -eq "0" ]]; then
+      return 0;
+    else
+      return $returnval;
+    fi
+  else
+    message_output ${MSG_VERBOSE} "Task chaining disabled, will not execute task: ${@}"
+  fi
+}
+
+# Chains a tool and waits for it's completion
+chain_tool()
+{ # Input: $1 - Tool cmdline
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  if [[ -e "${script_path}/ft_config/ft_config_chain.on" ]]; then
+    message_output ${MSG_VERBOSE} "Task chaining - executing task: ${@}"
+    ${@} & # Execute tool in the background
+    wait; # for background job to complete
+    returnval=$?
+    if [[ $returnval -eq "0" ]]; then
+      return 0;
+    else
+      return $returnval;
+    fi
+  else
+    message_output ${MSG_VERBOSE} "Task chaining disabled, will not execute task: ${@}"
+  fi
+}
+
 # Change directories to File Source Path
 start_filetasker()
 {
