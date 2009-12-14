@@ -1,17 +1,17 @@
 #!/bin/bash
 # -----------
 # FileTasker Script
-ftask_version="V0.7r22"
+ftask_version="V0.7r24";
 # Output Initial Greeting
-echo ""
-echo " FileTasker ${ftask_version}"
+echo "";
+echo " FileTasker ${ftask_version}";
 # Script's path
-script_location=`readlink -f ${BASH_SOURCE}`
-script_path=`dirname ${script_location}`
+script_location=`readlink -f ${BASH_SOURCE}`;
+script_path=`dirname ${script_location}`;
 # Kill Switch (Stop runaway script without aborting)
 if [[ -e "${script_path}/ft_config/ft_config_abort_next.on" ]]
   then
-    echo "   Error: Abort Next Task was requested."
+    echo "   Error: Abort Next Task was requested.";
     exit 0;
 fi
 # -----------
@@ -45,7 +45,7 @@ fi
 # -----------
 
 # Source Global Configuration
-source ${script_path}/ft_config/ft_config_global.sh
+source ${script_path}/ft_config/ft_config_global.sh;
 
 # -----------
 # Variables
@@ -55,7 +55,7 @@ source ${script_path}/ft_config/ft_config_global.sh
 # Error Codes
 # -----------
 
-E_BADARGS=65   # Wrong number of arguments passed to script.
+E_BADARGS=65;   # Wrong number of arguments passed to script.
 
 # -----------
 # Arrays
@@ -70,78 +70,78 @@ E_BADARGS=65   # Wrong number of arguments passed to script.
 # -----------
 
 # Set our root operational directories from ft_config.
-source_path_prefix=${main_path_prefix}
-target_path_prefix=${main_path_prefix}
+source_path_prefix=${main_path_prefix};
+target_path_prefix=${main_path_prefix};
 
 # -----------
 # End Variables
 # -----------
 
 # Source Common Operations
-source ${script_path}/ft_common/ft_common_ops.sh
+source ${script_path}/ft_common/ft_common_ops.sh;
 
 # -----------
 # Main Program
 # -----------
 #Backup Input Field Separator
-OLDIFS=${IFS} 
+OLDIFS=${IFS};
 
 # Snapshot our cmdline args
-ft_args=( ${@} )
-task_name=${ft_args[0]}
-subtask_name=${ft_args[1]}
+ft_args=( ${@} );
+task_name=${ft_args[0]};
+subtask_name=${ft_args[1]};
 
 # Were we passed a task? If not, bail out now.
 MIN_NUM_ARGS=1
 # Make sure [ doesn't barf with untyped variable vs String - Quote it!
 if [[ "${#}" -lt "${MIN_NUM_ARGS}" ]]
   then
-    echo "   Error: No taskfile specified."
+    echo "   Error: No taskfile specified.";
     load_task ft_help; # Unspecified Error
   else
     # Shift the args over past the task & subtask.
-    shift 2
-    subtask_args=( ${@} )
+    shift 2;
+    subtask_args=( ${@} );
     # Load Task
-    load_task ${task_name}
+    load_task ${task_name};
     # Were we passed a subtask? If not, bail out now.
     if [[ "${subtask_name}" == "" ]]
       then
         echo "   Error: No subtask specified."
         echo "   Supported Subtasks in $1: ${task_subtasks[@]}"
-        quit_filetasker
+        quit_filetasker;
         exit ${E_BADARGS};
       else
         # Load SubTask
-        select_subtask ${subtask_name}
+        select_subtask ${subtask_name};
         if [[ "${subtask_args[@]}" != "" ]]; then # Silent if blank.
-          echo "   Parameters for ${selected_subtask} subtask: ${subtask_args[@]}"
+          echo "   Parameters for ${selected_subtask} subtask: ${subtask_args[@]}";
         fi
     fi    
 fi
 
-message_output ${MSG_INFO} "------"
-message_output ${MSG_INFO} "LOG SECTION BEGIN"
-message_output ${MSG_STATUS} "Starting up:" `basename ${BASH_SOURCE}` "now executing with ${#ft_args} params:" ${ft_args[@]}
+message_output ${MSG_INFO} "------";
+message_output ${MSG_INFO} "LOG SECTION BEGIN";
+message_output ${MSG_STATUS} "Starting up:" `basename ${BASH_SOURCE}` "now executing with ${#ft_args} params:" ${ft_args[@]};
 
 
 # Set up ft environment from ft_common_ops.sh
 # This is the main initializer function that sets ft up for a task to be run.
 # Currently, changes to source directory. Throws a wobbly if we can't find it.
-start_filetasker
+start_filetasker;
 
 # Iterate over the files.
 # After start places us in the right directory, we can gather the contents
 # into an array and call "task $filename" on each file.
-iterate_directories
+iterate_directories;
 
 # Okay, all done, time to quit.
 # Brings us back to the directory we started in and blows you kisses goodbye.
-quit_filetasker
+quit_filetasker;
 
 # Unconditional restore back to the old IFS
-IFS=${OLDIFS}
-exit 0 # Success
+IFS=${OLDIFS};
+exit 0; # Success
 # -----------
 # End Main Program
 # -----------

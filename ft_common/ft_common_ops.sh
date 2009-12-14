@@ -36,9 +36,9 @@
 # Checks to see if $1 exists in array named $2
 # Uses indirect variables to pass the array.
 is_in_array() {
-  local match=${1} # What text are we checking for?
-  local input="$2[*]" # Indirection trick, add array selector BEFORE indirection.
-  local ar_input=${!input} # Now we can use variable indirection on array data like "input[*]"!
+  local match=${1}; # What text are we checking for?
+  local input="$2[*]"; # Indirection trick, add array selector BEFORE indirection.
+  local ar_input=${!input}; # Now we can use variable indirection on array data like "input[*]"!
   for i in ${ar_input[@]}; do # Because ${!input[*]} means list "array keys", not "array data"!
     if [[ ${match} == ${i} ]]; then return 0; fi; # Exists.
   done
@@ -46,9 +46,9 @@ is_in_array() {
 }
 
 is_not_in_array() {
-  local match=${1} # What text are we checking for?
-  local input="$2[*]" # Indirection trick, add array selector BEFORE indirection.
-  local ar_input=${!input} # Now we can use variable indirection on array data like "input[*]"!
+  local match=${1}; # What text are we checking for?
+  local input="$2[*]"; # Indirection trick, add array selector BEFORE indirection.
+  local ar_input=${!input}; # Now we can use variable indirection on array data like "input[*]"!
   for i in ${ar_input[@]}; do # Because ${!input[*]} means list "array keys", not "array data"!
     if [[ ${match} == ${i} ]]; then return 1; fi; # Exists.
   done
@@ -71,54 +71,51 @@ task_init()
 # Choices are currently: link, copy, move, debug
 # noclobber is the default mode.
 select_subtask()
-{
-  case "${1}" in
-  "LINK" | "Link" | "link" )
-    selected_subtask="link"
-  ;;
-  "COPY" | "Copy" | "copy" )
-    selected_subtask="copy"
-  ;;
-  "MOVE" | "Move" | "move" )
-    selected_subtask="move"
-  ;;
-  * )
-    # Default to debug
-    selected_subtask="debug"
-  ;;
-  esac
+{ # Inputs: $1 - A valid operation, set like task_subtasks=( debug link copy move )
+  local lower_input=`echo ${1} | tr A-Z a-z`; # Convert to lowercase.
+  validate_subtask ${lower_input}; # Check to see if it's valid
+  selected_subtask="${lower_input}"; # We're still here, so it's valid.
+}
+
+# Validates available subtasks from $task_subtasks
+validate_subtask()
+{ # Inputs: $1 - An operation-type to check
+  if is_not_in_array "${1}" "task_subtasks"; then
+    message_output ${MSG_CONSOLE} "${1} is not a valid subtask of ${task_name}!";
+    message_output ${MSG_CONSOLE} "Supported Subtasks in ${task_name}: ${task_subtasks[@]}";
+    quit_filetasker;
+    exit ${E_BADARGS};
+  fi
 }
 
 # Loads a taskfile
 load_task()
-{
-  set_traps
-  task_file="${script_path}/ft_tasks/${1}.sh"
-  echo "   Loading Task: ${task_file}"
+{ # Inputs: $1 - Task Filename
+  set_traps;
+  task_file="${script_path}/ft_tasks/${1}.sh";
+  echo "   Loading Task: ${task_file}";
   # Does the taskfile exist?
   if [[ -f "${task_file}" ]]
   then
     # The task file exists! Source the file.
-    source ${task_file}
+    source ${task_file};
   else
-    echo "FATAL: Cannot find taskfile ${task_file}"
+    echo "FATAL: Cannot find taskfile ${task_file}";
     exit ${E_MISSINGFILE}; # Throw an error
   fi
   # Run the task's initializer
-  task_init
+  task_init;
 }
 
 # Chains many tasks/tools in parallel
 chain_multi()
 { # Input: $1 - Name of Array containing chain commands
-  set -x
-  local input="$1[@]" # Indirection trick, add array selector BEFORE indirection.
-  local ar_input=${!input} # Now we can use variable indirection on array data like "input[*]"!
+  local input="$1[@]"; # Indirection trick, add array selector BEFORE indirection.
+  local ar_input=${!input}; # Now we can use variable indirection on array data like "input[*]"!
     echo ${#ar_input[@]};
   for element in ${ar_input[@]}; do # Because ${!input[*]} means list "array keys", not "array data"!
     echo $element;
   done
-  set +x
 }
 
 # Chains a new instance of Filetasker and waits for it's completion
@@ -127,17 +124,17 @@ chain_task()
   if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
   message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
   if [[ -e "${script_path}/ft_config/ft_config_chain.on" ]]; then
-    message_output ${MSG_VERBOSE} "Task chaining - executing task: ${@}"
+    message_output ${MSG_VERBOSE} "Task chaining - executing task: ${@}";
     ${script_path}/filetasker.sh ${@} & # Execute another filetasker in the background
     wait; # for background filetasker job to complete
-    returnval=$?
+    returnval=$?;
     if [[ $returnval -eq "0" ]]; then
       return 0;
     else
       return $returnval;
     fi
   else
-    message_output ${MSG_VERBOSE} "Task chaining disabled, will not execute task: ${@}"
+    message_output ${MSG_VERBOSE} "Task chaining disabled, will not execute task: ${@}";
   fi
 }
 
@@ -150,47 +147,46 @@ chain_tool()
     message_output ${MSG_VERBOSE} "Task chaining - executing task: ${@}"
     ${@} & # Execute tool in the background
     wait; # for background job to complete
-    returnval=$?
+    returnval=$?;
     if [[ $returnval -eq "0" ]]; then
       return 0;
     else
       return $returnval;
     fi
   else
-    message_output ${MSG_VERBOSE} "Task chaining disabled, will not execute task: ${@}"
+    message_output ${MSG_VERBOSE} "Task chaining disabled, will not execute task: ${@}";
   fi
 }
 
 # Change directories to File Source Path
 start_filetasker()
-{
-  message_output ${MSG_VERBOSE} "Working within Base Directory ${main_path_prefix}"
-  message_output ${MSG_VERBOSE} "Traversing to Source Directory at ${SECONDS} seconds..."
+{ # Inputs: NIL
+  message_output ${MSG_VERBOSE} "Working within Base Directory ${main_path_prefix}";
+  message_output ${MSG_VERBOSE} "Traversing to Source Directory at ${SECONDS} seconds...";
   # Is the source path a directory?
   if [[ -d ${source_path} ]]
   then
     # Yes, it's a directory, descend into it.
-    cd ${source_path}
+    cd ${source_path};
   else
     # Wasn't a directory.
-    message_output ${MSG_CONSOLE} "FATAL: Cannot find Taskfile's Source Directory ${source_path}"
+    message_output ${MSG_CONSOLE} "FATAL: Cannot find Taskfile's Source Directory ${source_path}";
     exit ${E_MISSINGFILE}; # Throw an error
   fi
-  message_output ${MSG_VERBOSE} "Searching Source directory ${PWD#${main_path_prefix}}/ for ${file_ext} files"
+  message_output ${MSG_VERBOSE} "Searching Source directory ${PWD#${main_path_prefix}}/ for ${file_ext} files";
 }
 
 # Change directories back to the previous working directory
 quit_filetasker()
-{
-  # Head Home
-  message_output ${MSG_VERBOSE} "Traversing back to Script Directory..."
-  cd ${script_path}
+{ # Inputs: NIL
+  message_output ${MSG_VERBOSE} "Traversing back to Script Directory...";
+  cd ${script_path}; # Head Home
   # Log too big?
   message_output ${MSG_VERBOSE} "Trimming log (If needed)...";
   # Close the log, show our times, then trim the log (Prevents leaving a one-line log after gz)
-  message_output ${MSG_STATUS} "LOG SECTION END -- Script took ${SECONDS} seconds to complete all operations."
-  trim_logs
-  echo ""
+  message_output ${MSG_STATUS} "LOG SECTION END -- Script took ${SECONDS} seconds to complete all operations.";
+  trim_logs;
+  echo "";
 }
 
 COMMENTBLOCK() { :; } # Makes things easy to comment out.
@@ -212,17 +208,17 @@ task_multidir_post() { :; } # Called automatically after iterate_files() complet
 # -----------
 
 # Load Logging Operation Functions First
-source ${script_path}/ft_common/ft_logging_ops.sh
+source ${script_path}/ft_common/ft_logging_core.sh;
 
 # Load File Core Functions
-source ${script_path}/ft_common/ft_file_core.sh
+source ${script_path}/ft_common/ft_file_core.sh;
 
 # -----------
 # Date Functions
 # -----------
 
 # Load Date Operation Functions
-source ${script_path}/ft_common/ft_date_ops.sh
+source ${script_path}/ft_common/ft_date_ops.sh;
 
 
 # -----------
