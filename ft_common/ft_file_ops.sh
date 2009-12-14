@@ -235,6 +235,12 @@ update_linklist_paths()
   generate_dir ${linkdir_path}
 }
 
+clean_source_dir()
+{
+  message_output ${MSG_CONSOLE} "  Cleaning ${1}";
+  rmdir -p ${1} 2> /dev/null; # Won't remove non-empty directories, supress output
+}
+
 # End Sub Routines
 
 # -----------

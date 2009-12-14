@@ -127,6 +127,7 @@ iterate_files()
         task ${file_name};  # Execute the task function of the loaded task.
       fi
     done
+  task_directory_complete ${PWD}; # Report directory completion for non-multidir tasks
   message_output ${MSG_CONSOLE} " Completed operations on ${filenames_count_success} of ${filenames_count_total} ${file_ext} files in ${PWD#${main_path_prefix}}/ at ${SECONDS} seconds.";
 }
 

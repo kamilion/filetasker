@@ -108,6 +108,19 @@ load_task()
   task_init
 }
 
+# Chains many tasks/tools in parallel
+chain_multi()
+{ # Input: $1 - Name of Array containing chain commands
+  set -x
+  local input="$1[@]" # Indirection trick, add array selector BEFORE indirection.
+  local ar_input=${!input} # Now we can use variable indirection on array data like "input[*]"!
+    echo ${#ar_input[@]};
+  for element in ${ar_input[@]}; do # Because ${!input[*]} means list "array keys", not "array data"!
+    echo $element;
+  done
+  set +x
+}
+
 # Chains a new instance of Filetasker and waits for it's completion
 chain_task()
 { # Input: $1 - Task, $2 - Subtask, $3 - Additional Parameters
@@ -187,7 +200,8 @@ task_pre() { :; } # Called manually from beginning of task()
 task_post() { :; } # Called manually at end of task()
 task_subtask() { :; } # Defined for special tasks
 task() { :; } # Called automatically by iterate_files()
-task_complete() { :; } # Called once automatically at the end of iterate_directories()
+task_directory_complete() { :; } # Called once automatically at the end of iterate_files() loop, $PWD as $1
+task_complete() { :; } # Called once automatically at the end of iterate_directories(), No Inputs
 task_multidir_pre() { :; } # Called automatically before directory pop
 task_multidir_info() { :; } # Called automatically after directory pop, before iterate_files()
 task_multidir_post() { :; } # Called automatically after iterate_files() completes

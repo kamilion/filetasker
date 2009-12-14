@@ -144,6 +144,15 @@ task_complete() # Called automatically at the end of iterate_directories()
   switch_to_log "${task_name}"
 }
 
+task_directory_complete() # Called automatically at the end of iterate_files()
+{
+  if [[ -e "${script_path}/ft_config/ft_config_tracing.on" ]]; then
+  message_output ${MSG_TRACE} "FuncDebug:" `basename ${BASH_SOURCE}` "now executing:" ${FUNCNAME[@]} "with ${#@} params:" ${@}; fi
+  # Clean out the source directory by removing empty directories.
+  clean_source_dir ${1};
+}
+
+
 : <<COMMENTBLOCK
 # Hook into the task initializer to pick up our subtask params
 task_init_hook()
