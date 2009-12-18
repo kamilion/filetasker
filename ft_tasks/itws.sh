@@ -10,17 +10,17 @@
 # -----------
 # Filename Inputs:
 # NetCDF
-#  edu.mit.ll.wx.itws.QuantizedEchoTop.Netcdf4.1km.20090402T193730Z.nc
-#  edu.mit.ll.wx.itws.QuantizedEchoTopsForecast.Netcdf4.1km.20090402T193500Z.nc
-#  edu.mit.ll.wx.itws.QuantizedVIL.Netcdf4.1km.20090402T193730Z.nc
-#  edu.mit.ll.wx.itws.QuantizedVILForecast.Netcdf4.1km.20090402T193500Z.nc
+#  edu.mit.ll.wx.itws.DFW_TWINDS.Netcdf4.1km.20090402T193730Z.nc
+#  edu.mit.ll.wx.itws.DFW_TWINDS.Netcdf4.1km.20090402T193500Z.nc
+#  edu.mit.ll.wx.itws.DFW_TWINDS.Netcdf4.1km.20090402T193730Z.nc
+#  edu.mit.ll.wx.itws.DFW_TWINDS.Netcdf4.1km.20090402T193500Z.nc
 # -----------
 # Filename Outputs:
 # NetCDF
-#  itws_edu.mit.ll.wx.itws.QuantizedEchoTop.Netcdf4.1km.20090402T193730Z.nc
-#  itws_edu.mit.ll.wx.itws.QuantizedEchoTopsForecast.Netcdf4.1km.20090402T193500Z.nc
-#  itws_edu.mit.ll.wx.itws.QuantizedVIL.Netcdf4.1km.20090402T193730Z.nc
-#  itws_edu.mit.ll.wx.itws.QuantizedVILForecast.Netcdf4.1km.20090402T193500Z.nc
+#  itws.DFW_TWINDS.Netcdf4.1km.20090402T193730Z.nc
+#  itws.DFW_TWINDS.Netcdf4.1km.20090402T193500Z.nc
+#  itws.DFW_TWINDS.Netcdf4.1km.20090402T193730Z.nc
+#  itws.DFW_TWINDS.Netcdf4.1km.20090402T193500Z.nc
 # -----------
 # End Program Information
 # -----------
