@@ -1,0 +1,24 @@
+Filetasker Feature List
+=======================
+
+Filetasker has several helpful automated functions that make your quest for ETL easier.
+Filetasker can generate directories with symlinks to recently processed files, for importing them as BLOBs into a database of your choice.
+Filetasker can automatically use SHA family hashing & GPG sign files before and/or after compressing them with any common UNIX compressor.
+Filetasker can call additional tasks, external tools, generate new configurations for them, and parse their output.
+Filetasker uses the high performance SQLite3 database internally to store and allow easy standards-based SQL89 access to it's metadata library.
+Filetasker can export it's metadata library into common CSV, pipe delimeted, or full SQL INSERT statements with image thumbnails and inline BLOBs.
+Filetasker keeps it's metadata stored with your data to make individual backup and recovery of fine-grained datasets easier.
+Filetasker can be used for offline replication using secure industry standard SSH and RSYNC technology.
+Filetasker can interact directly with your database, as long as there is an available SQL89-compliant commandline interface.
+Filetasker supports metadata extraction from the HDF5 and NetCDF formats, as well as plaintext data.
+Filetasker tasks can be taught to inspect the contents of binary files for metadata discovery, if such inspection tools are available.
+Filetasker is built on common unix tools, such as the Bash shell, SQLite3 database, and the GNU coreutils for run-anywhere support.
+Filetasker supports 32bit and 64bit versions of Linux, BSD-derivatives, Apple OSX, Sun Solaris and POSIX-compliant Microsoft Windows installations.
+Filetasker is well commented code. Over 30% of lines are comments, and most of the logging calls act as verbose comments as well.
+Filetasker supports explicitly serial operations, and explicitly parallel operations with ease!
+Filetasker function calls are verbosly named, so you don't have to guess what ft_filematch_take_snapshot() and ft_filematch_check_snapshot() are doing.
+Filetasker supports subtasks: symlinking, copying, or moving target files, without having to rewrite your task body.
+Filetasker supports intelligent overwrites: Links are updated, copy will overwrite a link but not a file, and a move will overwrite a link or a file.
+Filetasker commandlines are short and unambiguous, meant for use by other automata like cron, at, or a webservice CGI call.
+Filetasker supports severity-based realtime logging to sqlite database files, so even a webservice reading them can display various levels of realtime status data.
+Filetasker uses 64-bit unix epoch timestamps to unambiguously identify a specific UTC second between January 1, 1970 and December 31st, 9999.

@@ -1,0 +1,100 @@
+Example
+=======
+
+In Filetasker, you declare a 'task', a list of simple repeatable instructions to perform an operation:
+
+task() { make_log_header "${task_name} Working on ${file_name}";
+  local MyTask_SourceFiles=( "control" "binary" "xml_source" ); file_ext=".dat";
+  if is_not_in_array "${file_name%$file_ext}" "MyTask_SourceFiles"; then  # skip processing of this file.
+    message_output ${MSG_NOTICE} "Skipped ${1}, Not a requested Source File"; return ${ERR_UNDEFINED_SOURCE}; fi  # Report this task iteration ended early and bail out.
+ 
+  task_pre; ar_file_name=( "dataset" "${file_name%$file_ext}" "${ar_path_name[0]}" "dat" );  # Set up our $new_file_name
+  build_filename; task_post;
+}  # End of Task
+
+
+Tasks can define as many pretasks or posttasks as needed, with as many or as few parameters as required.
+This task sorts and renames three files from multiple /CCU_yyyymmdd/ directories into /yyyy/mm/dd/ directories,
+ while skipping over the source files that are still being continuously written to. Only complete files will be processed.
+
+task_pre() { match_take_snapshot ${file_name} # Take a snapshot of the file
+  if [[ "$ft_multidir" -eq "1" ]]; then source_path="${source_base_path}${dir_name}/"; fi  # Define how multidir uses source paths
+  parse_pathname ${dir_name}; parse_filename ${file_name};  # Parse the dated pathname into $ar_path_name & parse the . separated filename into $ar_file_name values
+  parse_to_epoch_from_yyyymmdd_dir ${ar_path_name[0]#"CCU_"}; }  # Get the date from the directory the file was stored in.
+
+
+The snapshot check ensures that live files currently being written to are skipped until the next full filetasker iteration.
+They will be checked again and added to the archive in their complete form on the next filetasker run.
+
+task_post() { if match_check_snapshot ${file_name}; then :; else return ${E_MISMATCH}; fi # Bail out early
+  generate_yyyy_mm_dd_date_dir_from_epoch ${file_epoch};  # Dated Directory needs to be generated from the timestamp.
+  target_path="${target_base_path}${date_dir}";  # Set the right dated target path (dirs always have trailing /)
+  perform_fileop ${selected_subtask} ${orig_file_name} ${new_file_name}; }  # Perform the file operation (above takes care of all paths for us)
+
+
+Some subtasks, like info or import, will ignore a new_file_name, or in some cases, only use the new_file_name, if the source file had already been moved by filetasker.
+Here's an example of an overridden hook:
+
+task_directory_complete() {  # Called automatically at the end of iterate_files()
+  clean_source_dir ${1}; }  # Clean out the source directory by removing empty directories.
+
+
+And some of the other default hooks you can override:
+
+task_pre() { :; }  # Called manually from beginning of task()
+task_post() { :; }  # Called manually at end of task()
+task_subtask() { :; }  # Defined for special tasks
+task() { :; }  # Called automatically by iterate_files()
+task_directory_complete() { :; }  # Called once automatically at the end of iterate_files() loop, $PWD as $1
+task_complete() { :; }  # Called once automatically at the end of iterate_directories(), No Inputs
+task_multidir_pre() { :; }  # Called automatically before directory pop
+task_multidir_info() { :; }  # Called automatically after directory pop, before iterate_files()
+task_multidir_post() { :; }  # Called automatically after iterate_files() completes
+
+Example Help Output
+=================
+
+Here's a simple 'ft_help' task definition, and it's output when ran.
+
+task_subtasks=( help )
+task_name="ft_help"
+file_ext=".sh"
+source_path="${script_path}/ft_tasks/"
+
+task_init() {
+        echo "    FT_Help Module - Listing known tasks..."
+        return 0; }
+
+task_help() {
+        echo "    FT_Help Module - Found task ${1}"
+        #if [[ "${1}" == "ft_help.sh" ]]; then return 127; else $PWD/${1}; return 0; fi
+        $PWD/${1}; # Execute the module for help.
+        return 0; }
+
+task() {
+    task_help $1
+    local return_value=${?}
+    if [[ $return_value != 0 ]]; then echo "     Failure. Reason ID: ${return_value}"; fi
+    return 0; }
+
+./filetasker.sh ft_help help
+
+ FileTasker V0.7r24
+   Loading Task: /home/kamilion/Git/filetasker/ft_tasks/ft_help.sh
+   FileTasker Help Module Loaded at 0 seconds.
+    FT_Help Module - Listing known tasks...
+   Scanned 5 .sh files in /home/kamilion/Git/filetasker/ft_tasks/
+    FT_Help Module - Found task aces.sh
+   Supported Subtasks in aces.sh: debug link copy move
+    FT_Help Module - Found task center.sh
+   Supported Subtasks in center.sh: debug link copy move
+    FT_Help Module - Found task ft_help.sh
+   Supported Subtasks in ft_help.sh: help
+    FT_Help Module - Found task ldm-all.sh
+   Supported Subtasks in ldm-all.sh: chain
+    FT_Help Module - Found task ldm.sh
+   Supported Subtasks in ldm.sh: debug link copy move
+   Completed operations on 0 of 5 .sh files in /home/kamilion/Git/filetasker/ft_tasks/ at 0 seconds.
+
+
+

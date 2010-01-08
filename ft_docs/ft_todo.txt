@@ -1,0 +1,49 @@
+Filetasker TODO LIST
+====================
+
+change references from 'loud' to 'verbose' on ft_config scripts
+need good text search function
+need local gpg static executable for hashing and signing
+need gpg wrapper functions for hashing
+need gpg wrapper functions for key generation
+need gpg wrapper functions for signing
+
+get rid of existing sqlite logger, it's abysmally slow due to the overhead of executing sqlite once per 'append'.
+sqlite coproc needs bash4. need it for associative arrays too. Can do amazing things in little code with these.
+sqlite coproc means only one running copy of sqlite and redirecting I/O to it's console and getting results back
+sqlite coproc is WAY FASTER than old file appends & allows parallel operations like hash + sign + match concurrently.
+Not much other code needs to change to take advantage of this, as it's already been planned and prepared for.
+need local bash4 static executable (including windows, muahaha)
+need local sqlite3 static executable
+need bash4 wrappers for scooping stdout into associative arrays
+need sqlite wrappers for load & store of associative arrays as transactions
+
+Need bash4 for using sqlite as a coproc:
+http://www.bash-hackers.org/wiki/doku.php/syntax/keywords/coproc
+Also need bash4 for 'mapfile' and associative arrays.
+http://www.bash-hackers.org/wiki/doku.php/bash4
+http://tiswww.case.edu/php/chet/bash/CHANGES
+
+fixup ft_config platform scripts to use different static executables.
+need coproc setup code (have working examples already)
+USE SQLITE IN MEMORY DATABASE FOR STUFF
+Need a ft_tick() function called after each task() for sqlite coproc.
+ft_tick will open and close sqlite transactions, to allow filetasker to be stopped and restarted.
+traps need update for transaction abort & coproc closeout.
+need sqlite wrapper functions for gpg hash & sign goodies
+
+need sqlplus cli export support wrapper (ORACLE)
+need mysql cli export support wrapper
+need postgresql cli export support wrapper
+need sqlite triggers for timestamps (ft_note already does this)
+
+need better configuration system -- propose ft-tool.sh frontend, db or configfile backed, prefixed variable system with per-task load/store.
+ft_tick() will update prefixed configuration from db on the fly. ft-tool.sh frontend can flip configuration switches while filetasker is running.
+use existing ft_note in git as basis for ft-tool.
+
+need to tag all ft-exported functions with ft_$moduleshortname so tasks have their entire namespace.
+need to build a module loader so tasks choose which modules are automatically loaded by an early array declare inside task.
+need wrappers for h5dump and ncdump
+
+Need ft_queue functions for chained tasks
+need proper function call logging shim to replace FuncDebug
