@@ -77,7 +77,10 @@ task() {
     if [[ $return_value != 0 ]]; then echo "     Failure. Reason ID: ${return_value}"; fi
     return 0; }
 
+Run the task:
 ./filetasker.sh ft_help help
+
+Here is the default console output:
 
  FileTasker V0.7r24
    Loading Task: /home/kamilion/Git/filetasker/ft_tasks/ft_help.sh
@@ -96,5 +99,62 @@ task() {
    Supported Subtasks in ldm.sh: debug link copy move
    Completed operations on 0 of 5 .sh files in /home/kamilion/Git/filetasker/ft_tasks/ at 0 seconds.
 
+And here is the logged output with Tracing enabled.
 
+(2010-01-07 16:35:56)(SEV:    INFO): ------
+(2010-01-07 16:35:56)(SEV:    INFO): LOG SECTION BEGIN
+(2010-01-07 16:35:56)(SEV:  STATUS): Starting up: filetasker.sh now executing with 7 params: ft_help help
+(2010-01-07 16:35:56)(SEV: VERBOSE): Working within Base Directory /home/kamilion/Git/filetasker/ft_temp/
+(2010-01-07 16:35:56)(SEV: VERBOSE): Traversing to Source Directory at 1 seconds...
+(2010-01-07 16:35:56)(SEV: VERBOSE): Searching Source directory /home/kamilion/Git/filetasker/ft_tasks/ for .sh files
+(2010-01-07 16:35:56)(SEV:   TRACE): FuncDebug: ft_file_core.sh now executing: iterate_directories main with 0 params:
+(2010-01-07 16:35:56)(SEV: VERBOSE):   Searching Single Source Directory.
+(2010-01-07 16:35:56)(SEV:   TRACE): FuncDebug: ft_file_core.sh now executing: iterate_files iterate_directories main with 0 params:
+(2010-01-07 16:35:56)(SEV: CONSOLE):  Scanned 10 .sh files in /home/kamilion/Git/filetasker/ft_tasks/
+(2010-01-07 16:35:56)(SEV: CONSOLE):  Completed operations on 0 of 10 .sh files in /home/kamilion/Git/filetasker/ft_tasks/ at 1 seconds.
+(2010-01-07 16:35:56)(SEV: VERBOSE): Traversing back to Script Directory...
+(2010-01-07 16:35:56)(SEV: VERBOSE): Trimming log (If needed)...
+(2010-01-07 16:35:56)(SEV:  STATUS): LOG SECTION END -- Script took 1 seconds to complete all operations.
 
+Here is some logged output from an actual task run:
+
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_file_core.sh now executing: iterate_files iterate_directories main with 0 params:
+(2010-01-07 16:37:24)(SEV: CONSOLE):  Scanned 10 .txt files in weather/faa_aces/CCU_20091022_NE/NFDC_src/
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: nfdc.sh now executing: task iterate_files iterate_directories main with 1 params: ils.txt
+(2010-01-07 16:37:24)(SEV:    INFO): =====================================
+(2010-01-07 16:37:24)(SEV:    INFO): ====== NFDC Working on ils.txt ======
+(2010-01-07 16:37:24)(SEV:    INFO): =====================================
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: nfdc.sh now executing: task_pre task iterate_files iterate_directories main with 1 params: ils.txt
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_file_matching.sh now executing: match_take_snapshot task_pre task iterate_files iterate_directories main with 1 params: ils.txt
+(2010-01-07 16:37:24)(SEV:    INFO):  File Match - Snapshotting Sourcefile Metadata
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_file_core.sh now executing: parse_pathname task_pre task iterate_files iterate_directories main with 1 params: CCU_20091022_NE/NFDC_src
+(2010-01-07 16:37:24)(SEV:    INFO):  Parsed Pathname: 2 elements: CCU_20091022_NE NFDC_src
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_file_core.sh now executing: parse_filename task_pre task iterate_files iterate_directories main with 1 params: ils.txt
+(2010-01-07 16:37:24)(SEV:    INFO):  Parsed Filename: 2 elements: ils txt
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_date_ops.sh now executing: parse_to_epoch_from_yyyymmdd_dir task_pre task iterate_files iterate_directories main with 1 params: 20091022_NE
+(2010-01-07 16:37:24)(SEV:    INFO):  Parsed Dirdate: 20091022 - Epoch: @1256194800 or Thu Oct 22 07:00:00 UTC 2009
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_file_core.sh now executing: build_filename task iterate_files iterate_directories main with 0 params:
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: nfdc.sh now executing: task_post task iterate_files iterate_directories main with 0 params:
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_file_matching.sh now executing: match_check_snapshot task_post task iterate_files iterate_directories main with 1 params: ils.txt
+(2010-01-07 16:37:24)(SEV:    INFO):  File Match - Verifying Match
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_file_matching.sh now executing: match_sleep match_check_snapshot task_post task iterate_files iterate_directories main with 1 params: 2
+(2010-01-07 16:37:24)(SEV:  NOTICE):  File Match - Skipping Match Sleep
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_file_matching.sh now executing: match_files match_check_snapshot task_post task iterate_files iterate_directories main with 0 params:
+(2010-01-07 16:37:24)(SEV:  NOTICE):   File [MATCH] Size was: 0 now: 0
+(2010-01-07 16:37:24)(SEV:  NOTICE):   File [MATCH] mTime was: 1257033710 now: 1257033710
+(2010-01-07 16:37:24)(SEV:  NOTICE):   File [MATCH] -- Operation Proceeding!
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_date_ops.sh now executing: generate_yyyymmdd_date_dir_from_epoch task_post task iterate_files iterate_directories main with 1 params: 1256194800
+(2010-01-07 16:37:24)(SEV:    INFO):  Generated Date Directory from: 1256194800 to: 20091022/
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_file_ops.sh now executing: perform_fileop task_post task iterate_files iterate_directories main with 3 params: copy ils.txt nfdc.ils.CCU_20091022_NE
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_file_ops.sh now executing: update_linklist_paths perform_fileop task_post task iterate_files iterate_directories main with 0 params:
+(2010-01-07 16:37:24)(SEV:    INFO):  Performing subtask: copy
+(2010-01-07 16:37:24)(SEV: VERBOSE):   Copying weather/faa_aces/CCU_20091022_NE/NFDC_src/ils.txt
+(2010-01-07 16:37:24)(SEV: VERBOSE):   to data/nfdc/20091022/nfdc.ils.CCU_20091022_NE
+(2010-01-07 16:37:24)(SEV:  STATUS):   Target does not exist. Creating file.
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_file_compression.sh now executing: check_and_compress_gzip_file perform_fileop task_post task iterate_files iterate_directories main with 1 params: nfdc.ils.CCU_20091022_NE
+(2010-01-07 16:37:24)(SEV:  NOTICE):  File not compressed. Compressing with gzip...
+(2010-01-07 16:37:24)(SEV: VERBOSE):   Compressing data/nfdc/20091022/nfdc.ils.CCU_20091022_NE
+(2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_file_ops.sh now executing: update_linklist check_and_compress_gzip_file perform_fileop task_post task iterate_files iterate_directories main with 1 params: nfdc.ils.CCU_20091022_NE.gz
+(2010-01-07 16:37:24)(SEV:  NOTICE):   LinkList: Now linking nfdc.ils.CCU_20091022_NE.gz to /home/kamilion/Git/filetasker/ft_temp/data/nfdc/linkdir/
+(2010-01-07 16:37:24)(SEV:  NOTICE):   LinkList: Now adding nfdc.ils.CCU_20091022_NE.gz to list
+(2010-01-07 16:37:24)(SEV:  STATUS):  File Operation Successful (0) for nfdc.ils.CCU_20091022_NE
