@@ -116,7 +116,7 @@ And here is the logged output with Tracing enabled.
 (2010-01-07 16:35:56)(SEV: VERBOSE): Trimming log (If needed)...
 (2010-01-07 16:35:56)(SEV:  STATUS): LOG SECTION END -- Script took 1 seconds to complete all operations.
 
-Here is some logged output from an actual task run:
+Here is some logged output from an actual task run with tracing enabled:
 
 (2010-01-07 16:37:24)(SEV:   TRACE): FuncDebug: ft_file_core.sh now executing: iterate_files iterate_directories main with 0 params:
 (2010-01-07 16:37:24)(SEV: CONSOLE):  Scanned 10 .txt files in weather/faa_aces/CCU_20091022_NE/NFDC_src/
@@ -158,3 +158,28 @@ Here is some logged output from an actual task run:
 (2010-01-07 16:37:24)(SEV:  NOTICE):   LinkList: Now linking nfdc.ils.CCU_20091022_NE.gz to /home/kamilion/Git/filetasker/ft_temp/data/nfdc/linkdir/
 (2010-01-07 16:37:24)(SEV:  NOTICE):   LinkList: Now adding nfdc.ils.CCU_20091022_NE.gz to list
 (2010-01-07 16:37:24)(SEV:  STATUS):  File Operation Successful (0) for nfdc.ils.CCU_20091022_NE
+
+When a task is interrupted, you get output such as this:
+
+    Copying weather/faa_aces/CCU_20091022_NE/NFDC_src/apt.txt
+    to data/nfdc/20091022/nfdc.apt.CCU_20091022_NE
+    Compressing data/nfdc/20091022/nfdc.apt.CCU_20091022_NE
+^C  Trapped Signal 3 (INTERRUPT), bailing out...
+  Traversing back to Script Directory...
+  Trimming log (If needed)...
+   Log nfdc does not need trimming. ( 28907 bytes )
+
+Debug Dump in progress...
+dump_debug_message: trap_exit_dump trap_bail_out compress_gzip_file check_and_compress_gzip_file perform_fileop task_post task iterate_files iterate_directories main
+   Script Location: /home/kamilion/Git/filetasker/filetasker.sh
+       Script Path: /home/kamilion/Git/filetasker
+  Main Path Prefix: /home/kamilion/Git/filetasker/ft_temp/
+Source Path Prefix: /home/kamilion/Git/filetasker/ft_temp/
+       Source Path: /home/kamilion/Git/filetasker/ft_temp/weather/faa_aces/CCU_20091022_NE/NFDC_src/
+Target Path Prefix: /home/kamilion/Git/filetasker/ft_temp/
+       Target Path: /home/kamilion/Git/filetasker/ft_temp/data/nfdc/20091022/
+           FT_Args: nfdc copy
+         Task Name: nfdc
+      Subtask Name: copy
+ Current File Name: apt.txt
+
