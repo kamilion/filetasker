@@ -1,3 +1,6 @@
 ft_logs/*.log
 ft_logs/*.gz
+ft_logs/*.sh
+ft_logs/*.sql
+ft_logs/*.sqlite
 ft_temp/*
