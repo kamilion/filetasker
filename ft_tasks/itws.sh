@@ -132,7 +132,8 @@ task_post()
   # Dated Directory needs to be generated from the timestamp.
   generate_yyyy_mm_dd_date_dir_from_epoch ${file_epoch}
   # Set the right dated target path (date_dir has trailing /)
-  target_path="${target_path}${ar_path_name[0]}/${date_dir}${ar_path_name[1]}/"
+  # pathname0 is airport code, pathname 1 is range
+  target_path="${target_path}${ar_path_name[@]:(-2):1}/${date_dir}${ar_path_name[@]:(-1):1}/"
   # Perform the file operation (takes care of all paths for us)
   perform_fileop ${selected_subtask} ${orig_file_name} ${new_file_name}
   # Set the original source & target path
