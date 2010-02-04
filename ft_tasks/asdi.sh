@@ -92,7 +92,7 @@ task()
   local my_file_date=${dir_name}
 
   # from asdi_xml.200903010000 to asdi.200903010000.xml.bin
-  ar_file_name[0]="asdi"  # Removes the _xml designation
+  ar_file_name[0]="asdi_xml"  # Forces the _xml designation
   ar_file_name=( "${ar_file_name[@]}" "xml" "bin" ) # Adds proper extensions
   
   # Build the filename from ar_file_name
