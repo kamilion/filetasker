@@ -87,8 +87,14 @@ task_pre()
   parse_pathname ${dir_name};
   # Parse the filename into an array
   parse_filename ${file_name};
-  # Get the date from the filename's second to last element
-  parse_to_epoch_from_date_ottr ${ar_file_name[@]:(-3):1};
+  # Check for precompressed files
+  if [[ "${ar_file_name[@]:(-1):1}" == "gz" ]]; then 
+    date_ottr=${ar_file_name[@]:(-4):1}; # Take the 3rd to last element
+  else 
+    date_ottr=${ar_file_name[@]:(-3):1}; # Take the 2nd to last element
+  fi
+  # Get the date from the filename element
+  parse_to_epoch_from_date_ottr ${date_ottr};
   return 0; # Success
 }
 
